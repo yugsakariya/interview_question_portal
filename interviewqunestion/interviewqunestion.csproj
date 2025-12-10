@@ -85,7 +85,7 @@
     <Content Include="User\About.aspx" />
     <Content Include="User\Bookmarks.aspx" />
     <Content Include="User\Dashboard.aspx" />
-    <Content Include="User\Defaultpage.aspx" />
+    <Content Include="Defaultpage.aspx" />
     <Content Include="User\Profile.aspx" />
     <Content Include="User\Questions.aspx" />
     <Content Include="User\QuizAttempt.aspx" />
@@ -194,11 +194,11 @@
     <Compile Include="User\Dashboard.aspx.designer.cs">
       <DependentUpon>Dashboard.aspx</DependentUpon>
     </Compile>
-    <Compile Include="User\Defaultpage.aspx.cs">
+    <Compile Include="Defaultpage.aspx.cs">
       <DependentUpon>Defaultpage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="User\Defaultpage.aspx.designer.cs">
+    <Compile Include="Defaultpage.aspx.designer.cs">
       <DependentUpon>Defaultpage.aspx</DependentUpon>
     </Compile>
     <Compile Include="User\Profile.aspx.cs">
