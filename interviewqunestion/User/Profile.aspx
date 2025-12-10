@@ -1,4 +1,4 @@
-﻿<%@ Page Title="My Profile" Language="C#" MasterPageFile="~/Site.Master"
+﻿<%@ Page Title="My Profile" Language="C#" MasterPageFile="~/User/Site.Master"
     AutoEventWireup="true" CodeBehind="Profile.aspx.cs"
     Inherits="interviewqunestion.User.Profile" %>
 

@@ -32,10 +32,7 @@ namespace interviewqunestion
         {
             Session.Clear();
             Session.Abandon();
-        }
-        protected void btnRegister_Click(object sender,EventArgs e) { 
-        }
-        protected void btnLogin_Click(object sender, EventArgs e) { 
+            Response.Redirect("~/Account/Login.aspx");
         }
     }
 }

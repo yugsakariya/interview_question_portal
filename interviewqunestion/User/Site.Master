@@ -1,4 +1,4 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="interviewqunestion.Site" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.Master.cs" Inherits="interviewqunestion.Site" %>
 
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -79,9 +79,6 @@
                             </div>
                             <asp:Label ID="lblUser" runat="server" CssClass="user-name"></asp:Label>
                         </div>
-
-<!--                        <asp:Button ID="btnRegister" runat="server" Text="Register" CssClass="btn-auth btn-register me-2" OnClick="btnRegister_Click" />
-                        <asp:Button ID="btnLogin" runat="server" Text="Login" CssClass="btn-auth btn-login me-2" OnClick="btnLogin_Click" /> -->
 
                         <asp:LinkButton ID="btnLogout" runat="server" CssClass="btn-auth btn-logout" OnClick="btnLogout_Click">
                             Logout

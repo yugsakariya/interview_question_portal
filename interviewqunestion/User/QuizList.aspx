@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Quizzes" Language="C#" MasterPageFile="~/Site.Master"
+﻿<%@ Page Title="Quizzes" Language="C#" MasterPageFile="~/User/Site.Master"
     AutoEventWireup="true" CodeBehind="QuizList.aspx.cs"
     Inherits="interview_questions.User.QuizList" %>
 

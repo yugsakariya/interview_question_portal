@@ -490,7 +490,7 @@
         <!-- Footer -->
         <footer class="footer">
             <p class="footer-text">
-                © 2024 Interview Question Portal. All rights reserved.
+                © 2025 Interview Question Portal. All rights reserved.
             </p>
         </footer>
 

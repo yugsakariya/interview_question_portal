@@ -1,4 +1,4 @@
-﻿<%@ Page Title="My Results" Language="C#" MasterPageFile="~/Site.Master"
+﻿<%@ Page Title="My Results" Language="C#" MasterPageFile="~/User/Site.Master"
     AutoEventWireup="true" CodeBehind="Results.aspx.cs"
     Inherits="interviewquestion.User.Results" %>
 

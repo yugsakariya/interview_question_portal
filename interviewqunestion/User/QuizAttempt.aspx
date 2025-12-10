@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Attempt Test" Language="C#" MasterPageFile="~/Site.Master"
+﻿<%@ Page Title="Attempt Test" Language="C#" MasterPageFile="~/User/Site.Master"
     AutoEventWireup="true" CodeBehind="QuizAttempt.aspx.cs"
     Inherits="interview_questions.User.QuizAttempt" %>
 

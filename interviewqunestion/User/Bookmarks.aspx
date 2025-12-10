@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Bookmarks" Language="C#" MasterPageFile="~/Site.Master"
+﻿<%@ Page Title="Bookmarks" Language="C#" MasterPageFile="~/User/Site.Master"
     AutoEventWireup="true" CodeBehind="Bookmarks.aspx.cs"
     Inherits="interview_questions.User.Bookmarks" %>
 

@@ -36,7 +36,7 @@ namespace interviewqunestion.User
 
         protected void btnAbout_Click(object sender, EventArgs e)
         {
-            Response.Redirect("~/User/About.aspx");
+            Response.Redirect("~/About.aspx");
         }
     }
 }

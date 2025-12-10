@@ -1,5 +1,5 @@
 ﻿
-<%@ Page Title="Questions" Language="C#" MasterPageFile="~/Site.Master"
+<%@ Page Title="Questions" Language="C#" MasterPageFile="~/User/Site.Master"
     AutoEventWireup="true" CodeBehind="Questions.aspx.cs"
     Inherits="interviewquestion.User.Questions" %>
 

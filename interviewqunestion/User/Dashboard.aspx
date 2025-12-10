@@ -1,4 +1,4 @@
-﻿<%@ Page Title="User Dashboard" Language="C#" MasterPageFile="~/Site.Master"
+﻿<%@ Page Title="User Dashboard" Language="C#" MasterPageFile="~/User/Site.Master"
     AutoEventWireup="true" CodeBehind="Dashboard.aspx.cs"
     Inherits="interview_questions.User.Dashboard" %>
 
