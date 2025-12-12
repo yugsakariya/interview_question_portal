@@ -1,4 +1,4 @@
-﻿<%@ Page Title="User Dashboard" Language="C#" MasterPageFile="~/User/Site.Master"
+﻿    <%@ Page Title="User Dashboard" Language="C#" MasterPageFile="~/User/Site.Master"
     AutoEventWireup="true" CodeBehind="Dashboard.aspx.cs"
     Inherits="interview_questions.User.Dashboard" %>
 
@@ -18,7 +18,7 @@
     <div class="stats-grid">
         
         
-        <div class="stat-card primary">
+        <!--<div class="stat-card primary">
             <div class="stat-header">
                 <div class="stat-icon">
                     <i class="fas fa-question-circle"></i>
@@ -26,13 +26,13 @@
             </div>
             <div class="stat-label">Total Questions</div>
             <div class="stat-value">
-                <asp:Label ID="lblQ" runat="server" Text="0" />
+                <asp:Label ID="lblQ" runat="server" />
             </div>
             <div class="stat-footer">
                 <i class="fas fa-arrow-up"></i>
                 <span>Available to practice</span>
             </div>
-        </div>
+        </div> -->
 
         
         <div class="stat-card success">
@@ -43,7 +43,7 @@
             </div>
             <div class="stat-label">Tests Attempted</div>
             <div class="stat-value">
-                <asp:Label ID="lblTests" runat="server" Text="0" />
+                <asp:Label ID="lblTests" runat="server" />
             </div>
             <div class="stat-footer">
                 <i class="fas fa-chart-line"></i>

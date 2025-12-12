@@ -37,6 +37,8 @@
                         CssClass="form-select"
                         AutoPostBack="true"
                         OnSelectedIndexChanged="FilterChanged">
+                        <asp:ListItem Selected="True" Text="All" Value="All"></asp:ListItem>
+
                     </asp:DropDownList>
                 </div>
 
