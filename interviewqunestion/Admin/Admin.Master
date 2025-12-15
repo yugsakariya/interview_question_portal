@@ -1,0 +1,140 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Admin.master.cs" 
+    Inherits="interviewqunestion.Admin.Admin" %>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title><%: Page.Title %> - IQ Admin Portal</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <asp:ContentPlaceHolder ID="head" runat="server"></asp:ContentPlaceHolder>
+
+    <link href="~/Styles/Admin.css" rel="stylesheet" />
+</head>
+
+<body>
+    <form runat="server" id="form1">
+        <div class="admin-wrapper">
+
+            <!-- SIDEBAR -->
+            <div class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <a href="<%= ResolveUrl("~/Admin/AdminHome.aspx") %>" class="brand">
+                        <i class="fas fa-shield-halved"></i>
+                        <span>IQ Admin</span>
+                    </a>
+                </div>
+
+                <div class="sidebar-nav">
+                    <asp:HyperLink ID="lnkDashboard" CssClass="nav-link" NavigateUrl="~/Admin/AdminHome.aspx" runat="server">
+                        <i class="fas fa-home"></i> Dashboard
+                    </asp:HyperLink>
+
+                    <asp:HyperLink ID="lnkCategories" CssClass="nav-link" NavigateUrl="~/Admin/ManageCategories.aspx" runat="server">
+                        <i class="fas fa-folder-open"></i> Categories
+                    </asp:HyperLink>
+
+                    <asp:HyperLink ID="lnkCompanies" CssClass="nav-link" NavigateUrl="~/Admin/ManageCompanies.aspx" runat="server">
+                        <i class="fas fa-building"></i> Companies
+                    </asp:HyperLink>
+
+                    <asp:HyperLink ID="lnkQuestions" CssClass="nav-link" NavigateUrl="~/Admin/ManageQuestions.aspx" runat="server">
+                        <i class="fas fa-question-circle"></i> Questions
+                    </asp:HyperLink>
+
+                    <asp:HyperLink ID="lnkTests" CssClass="nav-link" NavigateUrl="~/Admin/ManageTests.aspx" runat="server">
+                        <i class="fas fa-clipboard-list"></i> Tests
+                    </asp:HyperLink>
+
+                    <asp:HyperLink ID="lnkAssign" CssClass="nav-link" NavigateUrl="~/Admin/AssignQuestions.aspx" runat="server">
+                        <i class="fas fa-link"></i> Assign Questions
+                    </asp:HyperLink>
+
+                    <asp:HyperLink ID="lnkResults" CssClass="nav-link" NavigateUrl="~/Admin/ViewTestResults.aspx" runat="server">
+                        <i class="fas fa-chart-bar"></i> Results
+                    </asp:HyperLink>
+                </div>
+
+                <!-- USER SECTION -->
+                <div class="user-section">
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            <asp:Label ID="lblUserInitial" runat="server" Text="A" />
+                        </div>
+                        <div>
+                            <asp:Label ID="lblUser" CssClass="user-name" runat="server" />
+                        </div>
+                    </div>
+
+                    <asp:LinkButton ID="btnLogout" runat="server"
+                        CssClass="btn btn-outline-danger w-100"
+                        OnClick="btnLogout_Click"
+                        OnClientClick="return confirm('Are you sure you want to logout?');">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </asp:LinkButton>
+                </div>
+            </div>
+
+            <!-- MAIN CONTENT -->
+            <div class="main-wrapper">
+
+                <div class="top-bar">
+                    <div class="d-flex align-items-center">
+                        <button type="button" class="mobile-toggle" onclick="toggleSidebar()">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <span class="top-bar-title"><%: Page.Title %></span>
+                    </div>
+                </div>
+
+                <div class="content-area">
+                    <div class="content-card">
+                        <asp:ContentPlaceHolder ID="MainContent" runat="server" />
+                    </div>
+                </div>
+
+                <div class="footer">
+                    © <%: DateTime.Now.Year %> Interview Questions Portal - Admin
+                </div>
+
+            </div>
+        </div>
+
+        <script>
+            function toggleSidebar() {
+                document.getElementById("sidebar").classList.toggle("active");
+            }
+
+            // Active Link Highlight
+            window.onload = function () {
+                let page = window.location.pathname.split("/").pop();
+                let links = document.querySelectorAll(".nav-link");
+
+                links.forEach(link => {
+                    if (link.href.includes(page)) {
+                        link.classList.add("active");
+                    }
+                });
+            };
+
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function (event) {
+                if (window.innerWidth <= 768) {
+                    const sidebar = document.getElementById("sidebar");
+                    const toggle = document.querySelector(".mobile-toggle");
+
+                    if (sidebar.classList.contains("active") &&
+                        !sidebar.contains(event.target) &&
+                        !toggle.contains(event.target)) {
+                        sidebar.classList.remove("active");
+                    }
+                }
+            });
+        </script>
+    </form>
+</body>
+</html>
