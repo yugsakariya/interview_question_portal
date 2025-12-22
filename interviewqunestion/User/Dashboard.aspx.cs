@@ -15,14 +15,14 @@ namespace interview_questions.User
         DBHelper db = new DBHelper();
         protected void Page_Load(object sender, EventArgs e)
         {
-            Dictionary<string, dynamic> para = new Dictionary<string, dynamic>();
-            para["@USER_ID"] = Session["UserID"].ToString();
-            dt = db.ExeSP("sp_GetAll_Tests_BY_USER_ID",para);
-            lblTests.Text = dt.Rows.Count.ToString();
-            para.Clear();
-            para["@USERID"] = Session["UserID"].ToString();
-            dt = db.ExeSP("sp_GetAll_Bookmarks_BY_UserID", para);
-            lblBookmarks.Text = dt.Rows.Count.ToString();
+            //Dictionary<string, dynamic> para = new Dictionary<string, dynamic>();
+            ////para["@USER_ID"] = Session["UserID"].ToString();
+            //dt = db.ExeSP("sp_GetAll_Tests_BY_USER_ID", para);
+            //lblTests.Text = dt.Rows.Count.ToString();
+            //para.Clear();
+            //para["@USERID"] = Session["UserID"].ToString();
+            //dt = db.ExeSP("sp_GetAll_Bookmarks_BY_UserID", para);
+            //lblBookmarks.Text = dt.Rows.Count.ToString();
         }
     }
 }

@@ -36,9 +36,7 @@
                 GridLines="None"
                 ShowHeaderWhenEmpty="True">
                 <Columns>
-                    <asp:BoundField DataField="Category_ID" HeaderText="ID">
-                        <ItemStyle CssClass="col-id" />
-                    </asp:BoundField>
+                    
                     <asp:BoundField DataField="Category_Name" HeaderText="Category Name">
                         <ItemStyle CssClass="col-name" />
                     </asp:BoundField>

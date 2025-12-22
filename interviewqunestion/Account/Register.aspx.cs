@@ -2,56 +2,61 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
-using System.Web.Security;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace interviewqunestion.Account
 {
     public partial class Register : System.Web.UI.Page
     {
-        DataTable dt = new DataTable();
-        protected void Page_Load(object sender, EventArgs e)
-        {
-
-        }
-
         protected void btnRegister_Click(object sender, EventArgs e)
         {
-            string f_name = txtFirstName.Text;
-            string l_name = txtLastName.Text;
-            string email = txtEmail.Text;
-            string pass = txtPassword.Text;
+            // Retrieve values from HiddenFields instead of old TextBoxes
+            string f_name = hfFirstName.Value;
+            string l_name = hfLastName.Value;
+            string email = hfEmail.Value;
+            string pass = hfPassword.Value;
+
             DataLayer.DBHelper db = new DataLayer.DBHelper();
+
+            //[cite_start]// Check if user exists [cite: 121]
+                        // Remove the invalid attribute marker "[cite_start]" from the following line
+                        // [cite_start]// Check if user exists [cite: 121]
+                        // Check if user exists [cite: 121]
             Dictionary<string, dynamic> para = new Dictionary<string, dynamic>();
             para["@p_Email"] = email;
-            dt = db.ExeSP("sp_Check_User_Exists", para);
-            if (dt != null)
+            DataTable dtExists = db.ExeSP("sp_Check_User_Exists", para);
+
+            if (dtExists != null && dtExists.Rows.Count > 0)
             {
-                pnlSuccess.Visible = true;
-                lblMsg.Text = "Email ID already exists. Please use a different email.";
+                ShowTerminalError("Fatal: Email ID already in system. Access denied.");
                 return;
             }
+
+            // Perform Registration
             Dictionary<string, dynamic> parametres = new Dictionary<string, dynamic>();
             parametres["@p_FirstName"] = f_name;
             parametres["@p_LastName"] = l_name;
             parametres["@p_EmailID"] = email;
             parametres["@p_Password"] = pass;
-            dt = db.ExeSP("sp_UserRegister", parametres);
 
-            if (dt != null)
+            DataTable dtReg = db.ExeSP("sp_UserRegister", parametres);
+
+            if (dtReg != null && dtReg.Rows.Count > 0)
             {
-                Session["UserID"] = dt.Rows[0]["User_ID"].ToString();
-                //Session["Email"] = dt.Rows[0]["User_EmailID"].ToString();
-                //Session["Role"] = role;
-                //pnlError.Visible = true;
-                //string userId = Session["UserID"] as String;
-                //string User_EmailID = Session["Email"] as String;
+                Session["UserID"] = dtReg.Rows[0]["User_ID"].ToString();
                 Response.Redirect("~/User/Dashboard.aspx");
             }
+            else
+            {
+                ShowTerminalError("System failure during data write. Try again later.");
+            }
+        }
+
+        private void ShowTerminalError(string message)
+        {
+            // Sends the error back to the terminal UI and resets the input
+            string script = $"print('{message}', 'text-red-500'); step='firstName'; input.disabled=false; input.type='text';";
+            ClientScript.RegisterStartupScript(this.GetType(), "TerminalError", script, true);
         }
     }
 }

@@ -80,6 +80,37 @@
         </div>
     </div>
 
+    <div class="form-card">
+        <div class="form-card-header">Bulk Upload Questions</div>
+        
+        <div class="upload-section">
+            <div class="upload-info">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    <strong>Upload CSV File Format:</strong>
+                    <p>Category, Company, Question, OptionA, OptionB, OptionC, OptionD, CorrectOption</p>
+                    <p class="upload-note">Note: CorrectOption should be A, B, C, or D</p>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group full-width">
+                    <label class="form-label">Select CSV File</label>
+                    <asp:FileUpload ID="fuQuestions" runat="server" />
+                </div>
+            </div>
+
+            <asp:Label ID="lblUploadMsg" runat="server" CssClass="alert alert-success" Visible="false"></asp:Label>
+
+            <div class="form-actions">
+                <asp:Button ID="btnUpload" runat="server" Text="Upload Questions"
+                    CssClass="btn btn-success" OnClick="btnUpload_Click" />
+                <asp:Button ID="btnDownloadTemplate" runat="server" Text="Download Template"
+                    CssClass="btn btn-info" OnClick="btnDownloadTemplate_Click" />
+            </div>
+        </div>
+    </div>
+
     <div class="table-card">
         <div class="table-header">
             <h2 class="table-title">All Questions</h2>

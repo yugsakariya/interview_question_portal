@@ -1,0 +1,6 @@
+Category,Company,Question,OptionA,OptionB,OptionC,OptionD,CorrectOption
+Programming,Google,"What is C#?","A programming language","A database","An operating system","A web browser",A
+Database,Microsoft,"What does SQL stand for?","Structured Query Language","Simple Question Language","Standard Quality Language","System Query Language",A
+Programming,Amazon,"Which of the following is NOT a valid C# data type?","int","string","float","number",D
+Web Development,Facebook,"What does HTML stand for?","HyperText Markup Language","High Tech Modern Language","Home Tool Markup Language","Hyperlinks and Text Markup Language",A
+Database,Oracle,"Which SQL command is used to retrieve data?","SELECT","GET","FETCH","RETRIEVE",A

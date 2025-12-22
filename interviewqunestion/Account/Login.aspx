@@ -3,641 +3,159 @@
 <!DOCTYPE html>
 <html>
 <head runat="server">
-    <title>Login - IQ Portal</title>
-    <meta charset="utf-8" />
+    <title>Terminal Login - IQ Portal</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.clouds.min.js"></script>
-
-    <link href="~/Styles/Login.css" rel="stylesheet" />
-
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
-    position: relative;
-    overflow: hidden;
-    margin: 0;
-}
-
-/* Vanta.js background container */
-#vanta-bg {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    z-index: 0;
-}
-
-.auth-container {
-    width: 100%;
-    max-width: 520px;
-    position: relative;
-    z-index: 10;
-    animation: fadeInUp 0.6s ease-out;
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.brand {
-    text-align: center;
-    margin-bottom: 2rem;
-    animation: fadeIn 0.8s ease-out 0.2s both;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-.brand i {
-    font-size: 2.5rem;
-    color: #ffffff;
-    margin-bottom: 0.5rem;
-    display: block;
-    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    animation: bounceIcon 2s ease-in-out infinite;
-}
-
-@keyframes bounceIcon {
-    0%, 100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-10px);
-    }
-}
-
-.brand h1 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #ffffff;
-    margin-bottom: 0.25rem;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-.brand p {
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 0.875rem;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-}
-
-.auth-card {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    border-radius: 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 2.5rem;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.15) inset;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    animation: fadeInScale 0.6s ease-out 0.3s both;
-}
-
-@keyframes fadeInScale {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-.auth-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.25) inset;
-}
-
-.auth-header {
-    margin-bottom: 1.5rem;
-}
-
-    .auth-header h2 {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: #ffffff;
-        margin-bottom: 0.25rem;
-        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    }
-
-    .auth-header p {
-        color: rgba(255, 255, 255, 0.9);
-        font-size: 0.875rem;
-        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-    }
-
-/* Role Tabs */
-.role-tabs {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1.5rem;
-    padding: 0.25rem;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 0.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.role-tab {
-    flex: 1;
-    padding: 0.625rem;
-    text-align: center;
-    font-size: 0.875rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: none;
-    background: transparent;
-    color: rgba(255, 255, 255, 0.8);
-    border-radius: 0.375rem;
-    position: relative;
-    overflow: hidden;
-}
-
-    .role-tab::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, #3b82f6, #2563eb);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        z-index: -1;
-    }
-
-    .role-tab:hover {
-        color: #ffffff;
-        transform: translateY(-2px);
-    }
-
-    .role-tab.active {
-        background: rgba(255, 255, 255, 0.2);
-        color: #ffffff;
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-        transform: translateY(-2px);
-    }
-
-        .role-tab.active::before {
-            opacity: 0.05;
+        body {
+            background: radial-gradient(circle at top, #1e293b, #020617);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
         }
 
-    .role-tab i {
-        margin-right: 0.375rem;
-        transition: transform 0.3s ease;
-    }
-
-    .role-tab:hover i {
-        transform: scale(1.1);
-    }
-
-.hidden {
-    display: none;
-}
-
-.form-group {
-    margin-bottom: 1rem;
-    animation: slideIn 0.5s ease-out both;
-}
-
-    .form-group:nth-child(5) {
-        animation-delay: 0.4s;
-    }
-
-    .form-group:nth-child(6) {
-        animation-delay: 0.5s;
-    }
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-.form-label {
-    display: block;
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #ffffff;
-    margin-bottom: 0.375rem;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-.input-wrapper {
-    position: relative;
-}
-
-.input-icon {
-    position: absolute;
-    left: 0.875rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #9ca3af;
-    font-size: 0.875rem;
-    transition: all 0.3s ease;
-    z-index: 1;
-}
-
-.form-control {
-    width: 100%;
-    padding: 0.625rem 0.875rem 0.625rem 2.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 0.5rem;
-    font-size: 0.875rem;
-    color: #1f2937;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    background: rgba(255, 255, 255, 0.9);
-}
-
-    .form-control:hover {
-        border-color: rgba(255, 255, 255, 0.5);
-        background: rgba(255, 255, 255, 0.95);
-    }
-
-    .form-control:focus {
-        outline: none;
-        border-color: #3b82f6;
-        background: rgba(255, 255, 255, 1);
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-        transform: translateY(-1px);
-    }
-
-        .form-control:focus ~ .input-icon {
-            color: #3b82f6;
-            transform: translateY(-50%) scale(1.1);
+        .terminal {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: boot 0.6s ease-out;
         }
 
-.input-wrapper:hover .input-icon {
-    color: #3b82f6;
-    transform: translateY(-50%) scale(1.1);
-}
-
-.form-control::placeholder {
-    color: #9ca3af;
-}
-
-.error-message {
-    color: #ef4444;
-    font-size: 0.75rem;
-    margin-top: 0.25rem;
-    display: block;
-    animation: shake 0.4s ease;
-}
-
-@keyframes shake {
-    0%, 100% {
-        transform: translateX(0);
-    }
-
-    25% {
-        transform: translateX(-5px);
-    }
-
-    75% {
-        transform: translateX(5px);
-    }
-}
-
-.validation-summary {
-    background: #fef2f2;
-    border: 1px solid #fecaca;
-    border-radius: 0.5rem;
-    padding: 0.75rem;
-    margin-bottom: 1rem;
-    animation: slideDown 0.4s ease-out;
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.validation-summary ul {
-    margin: 0;
-    padding-left: 1.25rem;
-    color: #991b1b;
-    font-size: 0.8rem;
-}
-
-.error-alert {
-    background: #fef2f2;
-    border: 1px solid #fecaca;
-    color: #991b1b;
-    padding: 0.75rem;
-    border-radius: 0.5rem;
-    margin-bottom: 1rem;
-    font-size: 0.875rem;
-    animation: slideDown 0.4s ease-out;
-}
-
-.btn-primary {
-    width: 100%;
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-    color: white;
-    padding: 0.75rem;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    font-size: 0.875rem;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    margin-top: 0.5rem;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
-}
-
-    .btn-primary::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-        transition: left 0.5s ease;
-    }
-
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
-    }
-
-        .btn-primary:hover::before {
-            left: 100%;
+        @keyframes boot {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-    .btn-primary:active {
-        transform: translateY(0);
-        box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);
-    }
-
-.auth-footer {
-    text-align: center;
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-    .auth-footer p {
-        color: rgba(255, 255, 255, 0.9);
-        font-size: 0.875rem;
-        margin: 0;
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-    }
-
-    .auth-footer a {
-        color: #ffffff;
-        font-weight: 600;
-        text-decoration: none;
-        transition: all 0.2s ease;
-        position: relative;
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-    }
-
-        .auth-footer a::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: #ffffff;
-            transition: width 0.3s ease;
+        /* Blinking cursor effect */
+        #terminal-input::after {
+            content: "|";
+            animation: blink 1s infinite;
         }
 
-        .auth-footer a:hover {
-            color: #93c5fd;
-        }
-
-            .auth-footer a:hover::after {
-                width: 100%;
-            }
-
-@media (max-width: 576px) {
-    body {
-        padding: 0.5rem;
-    }
-
-    .auth-card {
-        padding: 1.5rem;
-    }
-
-    .role-tab {
-        font-size: 0.8rem;
-        padding: 0.5rem;
-    }
-
-        .role-tab i {
-            display: block;
-            margin: 0 auto 0.25rem;
-        }
-}
-
-/* Loading animation for form submission */
-.btn-primary.loading {
-    pointer-events: none;
-    opacity: 0.7;
-}
-
-    .btn-primary.loading::after {
-        content: '';
-        position: absolute;
-        width: 16px;
-        height: 16px;
-        top: 50%;
-        left: 50%;
-        margin-left: -8px;
-        margin-top: -8px;
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        border-top-color: white;
-        border-radius: 50%;
-        animation: spin 0.6s linear infinite;
-    }
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
+        @keyframes blink { 50% { opacity: 0; } }
+        
+        #output::-webkit-scrollbar { width: 4px; }
+        #output::-webkit-scrollbar-thumb { background: #334155; }
     </style>
 </head>
 <body>
-    <!-- Vanta.js Background -->
-    <div id="vanta-bg"></div>
-
     <form id="form1" runat="server">
-        <div class="auth-container">
+        <asp:HiddenField ID="hfRole" runat="server" Value="User" />
+        <asp:HiddenField ID="hfEmail" runat="server" />
+        <asp:HiddenField ID="hfPassword" runat="server" />
+        <asp:Button ID="btnSubmitInternal" runat="server" OnClick="btnLogin_Click" style="display:none;" />
 
-            <!-- Brand -->
-            <div class="brand">
-                <i class="fas fa-graduation-cap"></i>
-                <h1>IQ Portal</h1>
-                <p>Interview Questions Portal</p>
+        <div class="terminal p-5 rounded-lg font-mono min-w-[520px] max-w-[600px]">
+            <div class="terminal-header bg-zinc-700 text-white p-2 rounded-t-lg flex items-center">
+                <span class="text-red-500 text-5xl leading-[0px] align-middle -mt-2">•</span>
+                <span class="text-yellow-500 text-5xl leading-[0px] align-middle -mt-2 ml-1">•</span>
+                <span class="text-green-500 text-5xl leading-[0px] align-middle -mt-2 ml-1">•</span>
+                <span class="ml-4 text-sm opacity-70">iq_portal --- bash</span>
             </div>
 
-            <!-- Card -->
-            <div class="auth-card">
-
-                <!-- Header -->
-                <div class="auth-header">
-                    <h2>Welcome back</h2>
-                    <p>Please enter your details to sign in</p>
-                </div>
-
-                <!-- Role Tabs -->
-                <div class="role-tabs">
-                    <button type="button" class="role-tab active" onclick="selectRole(this, 'User')">
-                        <i class="fas fa-user"></i>User
-                    </button>
-                    <button type="button" class="role-tab" onclick="selectRole(this, 'Admin')">
-                        <i class="fas fa-user-shield"></i>Admin
-                    </button>
-                </div>
-
-                <!-- Hidden Dropdown -->
-                <asp:DropDownList ID="ddlRole" runat="server" CssClass="hidden">
-                    <asp:ListItem Text="User" Value="User" Selected="True" />
-                    <asp:ListItem Text="Admin" Value="Admin" />
-                </asp:DropDownList>
-
-                <!-- Error Message -->
-                <asp:Panel ID="pnlError" runat="server" Visible="false" CssClass="error-alert">
-                    <asp:Label ID="lblMsg" runat="server" />
-                </asp:Panel>
-
-                <!-- Validation Summary -->
-                <asp:ValidationSummary runat="server" CssClass="validation-summary"
-                    HeaderText="Please fix the following:" />
-
-                <!-- Email -->
-                <div class="form-group" style="width:250px;">
-                    <label class="form-label">Email</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-envelope input-icon"></i>
-                        <asp:TextBox ID="txtEmail" runat="server"
-                            CssClass="form-control"
-                            placeholder="you@example.com" />
-                    </div>
-                    <asp:RequiredFieldValidator runat="server"
-                        ControlToValidate="txtEmail"
-                        ErrorMessage="Email is required"
-                        Display="Dynamic"
-                        CssClass="error-message" />
-                </div>
-
-                <!-- Password -->
-                <div class="form-group">
-                    <label class="form-label">Password</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-lock input-icon"></i>
-                        <asp:TextBox ID="txtPassword" runat="server"
-                            TextMode="Password"
-                            CssClass="form-control"
-                            placeholder="••••••" />
-                    </div>
-                    <asp:RequiredFieldValidator runat="server"
-                        ControlToValidate="txtPassword"
-                        ErrorMessage="Password is required"
-                        Display="Dynamic"
-                        CssClass="error-message" />
-                </div>
-
-                <!-- Submit Button -->
-                <asp:Button ID="btnLogin" runat="server"
-                    Text="Login"
-                    CssClass="btn-primary"
-                    OnClick="btnLogin_Click" />
-
-                <!-- Footer -->
-                <div class="auth-footer">
-                    <p>
-                        Don't have an account? 
-                        <asp:HyperLink ID="lnkSignup" runat="server" NavigateUrl="Register.aspx" Text="Register" />
-                    </p>
-                </div>
-
+            <div class="pl-4 pt-4 bg-gray-900 h-[300px] overflow-y-auto border-x border-zinc-800" id="output">
+                <p class="text-emerald-400 font-bold mb-2">>> Connection Established...</p>
+                <p class="text-gray-500">System: Interview Question Portal (v2.0.1)</p>
+                <p class="text-gray-500 mb-4">-----------------------------------------</p>
+                <p class="text-sky-300">Enter <span class="text-amber-400 font-bold">[1]</span> for USER LOGIN</p>
+                <p class="text-sky-300">Enter <span class="text-amber-400 font-bold">[2]</span> for ADMIN LOGIN</p>
+                <p class="text-sky-300">Enter <span class="text-amber-400 font-bold">[3]</span> to REGISTER</p>
             </div>
 
+            <div class="input flex pl-4 bg-gray-900 pb-4 rounded-b-lg items-center border-x border-b border-zinc-800">
+                <span class="text-green-500 font-bold">➝</span>
+                <span class="text-sky-300 ml-2 font-bold">~</span>
+                <span class="ml-2 text-md text-gray-500 italic" id="placeholder"></span>
+                <input class="bg-transparent border-none outline-none ring-0 focus:ring-0 text-amber-400 w-full ml-1" 
+                       id="terminal-input" type="text" autofocus autocomplete="off" />
+            </div>
         </div>
 
         <script>
-            // Initialize Vanta.js CLOUDS effect
-            VANTA.CLOUDS({
-                el: "#vanta-bg",
-                mouseControls: true,
-                touchControls: true,
-                gyroControls: false,
-                minHeight: 200.00,
-                minWidth: 200.00,
-                skyColor: 0x1e3a8a,
-                cloudColor: 0x3b82f6,
-                cloudShadowColor: 0x1e293b,
-                sunColor: 0x60a5fa,
-                sunGlareColor: 0x93c5fd,
-                sunlightColor: 0x3b82f6,
-                speed: 0.8
+            const input = document.getElementById("terminal-input");
+            const output = document.getElementById("output");
+            const placeholder = document.getElementById("placeholder");
+
+            // Link to ASP.NET Hidden Fields
+            const hfRole = document.getElementById('<%= hfRole.ClientID %>');
+            const hfEmail = document.getElementById('<%= hfEmail.ClientID %>');
+            const hfPassword = document.getElementById('<%= hfPassword.ClientID %>');
+
+            let step = "choice"; // Current state
+
+            function print(text, color = "text-gray-400") {
+                const p = document.createElement("p");
+                p.className = `${color} mt-1`;
+                p.innerHTML = text;
+                output.appendChild(p);
+                output.scrollTop = output.scrollHeight;
+            }
+
+            function typePlaceholder(text) {
+                placeholder.textContent = text;
+            }
+
+            typePlaceholder("Enter choice...");
+
+            input.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    const val = input.value.trim();
+                    if (!val && step !== "password") return;
+                    
+                    // Print the command entered
+                    print(`<span class="text-green-500">➝</span> <span class="text-sky-300">~</span> <span class="text-amber-400">${step === 'password' ? '********' : val}</span>`);
+                    input.value = "";
+
+                    handleStep(val);
+                }
             });
 
-            // Role tab selection
-            function selectRole(button, role) {
-                // Remove active class from all tabs
-                document.querySelectorAll('.role-tab').forEach(btn => {
-                    btn.classList.remove('active');
-                });
+            function handleStep(val) {
+                switch (step) {
+                    case "choice":
+                        if (val === "1") {
+                            hfRole.value = "User";
+                            print("Access Level: <span class='text-white'>USER</span>", "text-emerald-500");
+                            print("Enter Email Address:", "text-sky-300");
+                            step = "email";
+                        } else if (val === "2") {
+                            hfRole.value = "Admin";
+                            print("Access Level: <span class='text-white'>ADMIN</span>", "text-emerald-500");
+                            print("Enter Email Address:", "text-sky-300");
+                            step = "email";
+                        } else if (val === "3") {
+                            print("Redirecting to Registration...", "text-yellow-400");
+                            setTimeout(() => window.location.href = "Register.aspx", 500);
+                        } else {
+                            print("Invalid Option. Choose 1, 2, or 3.", "text-red-500");
+                        }
+                        break;
 
-                // Add active class to clicked tab
-                button.classList.add('active');
+                    case "email":
+                        if (val.includes("@")) {
+                            hfEmail.value = val;
+                            print("Identity Verified.", "text-emerald-500");
+                            print("Enter Password:", "text-sky-300");
+                            input.type = "password"; // Hide password
+                            step = "password";
+                        } else {
+                            print("Invalid Email Format.", "text-red-500");
+                        }
+                        break;
 
-                // Update hidden dropdown
-                var dropdown = document.getElementById('<%= ddlRole.ClientID %>');
-                dropdown.value = role;
+                    case "password":
+                        hfPassword.value = val;
+                        print("Authenticating with IQ-Core...", "text-yellow-400");
+                        // Trigger the actual ASP.NET Postback
+                        document.getElementById('<%= btnSubmitInternal.ClientID %>').click();
+                        break;
+                }
             }
+
+            // Keep focus on input
+            document.addEventListener("click", () => input.focus());
         </script>
     </form>
 </body>
