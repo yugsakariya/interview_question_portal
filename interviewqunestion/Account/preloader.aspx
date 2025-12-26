@@ -40,12 +40,12 @@ html, body {
 /* Traces */
 .trace-bg {
     stroke: #333;
-    stroke-width: 1.8;
+    stroke-width: 1.8px;
     fill: none;
 }
 
 .trace-flow {
-    stroke-width: 1.8;
+    stroke-width: 1.8px;
     fill: none;
     stroke-dasharray: 40 400;
     stroke-dashoffset: 438;

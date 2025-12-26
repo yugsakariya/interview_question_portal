@@ -15,23 +15,23 @@ namespace interviewqunestion.User
         }
         protected void btnLoginNav_Click(object sender, EventArgs e)
         {
-            Response.Redirect("~/Account/Login.aspx");
+            Response.Redirect("~/Account/preloader.aspx?type=login");
         }
 
         protected void btnRegisterNav_Click(object sender, EventArgs e)
         {
-            Response.Redirect("~/Account/Register.aspx");
+            Response.Redirect("~/Account/preloader.aspx?type=register");
         }
 
         protected void btnHaveAccount_Click(object sender, EventArgs e)
         {
-            Response.Redirect("~/Account/Login.aspx");
+            Response.Redirect("~/Account/preloader.aspx?type=login");
         }
 
 
         protected void btnGetStarted_Click(object sender, EventArgs e)
         {
-            Response.Redirect("~/Account/Register.aspx");
+            Response.Redirect("~/Account/preloader.aspx?type=register");
         }
 
         protected void btnAbout_Click(object sender, EventArgs e)

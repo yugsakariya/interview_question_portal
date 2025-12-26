@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Web.UI;
+using BCrypt.Net;
 
 namespace interviewqunestion.Account
 {
@@ -10,18 +11,17 @@ namespace interviewqunestion.Account
     {
         protected void btnRegister_Click(object sender, EventArgs e)
         {
-            // Retrieve values from HiddenFields instead of old TextBoxes
             string f_name = hfFirstName.Value;
             string l_name = hfLastName.Value;
             string email = hfEmail.Value;
             string pass = hfPassword.Value;
 
+            // Hash the password
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(pass);
+
             DataLayer.DBHelper db = new DataLayer.DBHelper();
 
-            //[cite_start]// Check if user exists [cite: 121]
-                        // Remove the invalid attribute marker "[cite_start]" from the following line
-                        // [cite_start]// Check if user exists [cite: 121]
-                        // Check if user exists [cite: 121]
+            // Check if user exists
             Dictionary<string, dynamic> para = new Dictionary<string, dynamic>();
             para["@p_Email"] = email;
             DataTable dtExists = db.ExeSP("sp_Check_User_Exists", para);
@@ -32,12 +32,12 @@ namespace interviewqunestion.Account
                 return;
             }
 
-            // Perform Registration
+            // Perform Registration with hashed password
             Dictionary<string, dynamic> parametres = new Dictionary<string, dynamic>();
             parametres["@p_FirstName"] = f_name;
             parametres["@p_LastName"] = l_name;
             parametres["@p_EmailID"] = email;
-            parametres["@p_Password"] = pass;
+            parametres["@p_Password"] = hashedPassword;
 
             DataTable dtReg = db.ExeSP("sp_UserRegister", parametres);
 
@@ -54,7 +54,6 @@ namespace interviewqunestion.Account
 
         private void ShowTerminalError(string message)
         {
-            // Sends the error back to the terminal UI and resets the input
             string script = $"print('{message}', 'text-red-500'); step='firstName'; input.disabled=false; input.type='text';";
             ClientScript.RegisterStartupScript(this.GetType(), "TerminalError", script, true);
         }
