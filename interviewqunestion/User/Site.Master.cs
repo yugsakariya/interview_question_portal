@@ -28,7 +28,14 @@ namespace interviewqunestion
             //lblUser.Text = dt.Rows[0]["User_FirstName"].ToString() + " " + dt.Rows[0]["User_LastName"].ToString();
         }
 
-        protected void btnLogout_Click(object sender, EventArgs e)
+        //protected void btnLogout_Click(object sender, EventArgs e)
+        //{
+        //    Session.Clear();
+        //    Session.Abandon();
+        //    Response.Redirect("~/Account/Login.aspx");
+        //}
+
+        protected void btnLogout_Click1(object sender, EventArgs e)
         {
             Session.Clear();
             Session.Abandon();

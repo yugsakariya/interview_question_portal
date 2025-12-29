@@ -1,11 +1,9 @@
-﻿using DataLayer;
+using DataLayer;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
-using System.Web;
 using System.Web.UI;
-using BCrypt.Net;  // ← ADD THIS
+using BCrypt.Net;
 
 namespace interviewqunestion.Account
 {
@@ -17,7 +15,6 @@ namespace interviewqunestion.Account
 
         protected void btnLogin_Click(object sender, EventArgs e)
         {
-            string role = hfRole.Value;
             string username = hfEmail.Value;
             string password = hfPassword.Value;
 
@@ -30,66 +27,50 @@ namespace interviewqunestion.Account
             DBHelper db = new DBHelper();
             Dictionary<string, dynamic> parametres = new Dictionary<string, dynamic>();
             parametres["@p_Email"] = username;
-            // REMOVED: parametres["@p_Password"] = password;
 
             DataTable dt = new DataTable();
 
             try
             {
-                if (role == "User")
+                // Get user by email (single stored procedure for all users)
+                dt = db.ExeSP("sp_GetUserByEmail", parametres);
+
+                if (dt != null && dt.Rows.Count > 0)
                 {
-                    dt = db.ExeSP("sp_GetUserByEmail", parametres);  // ← NEW SP
-                    
-                    if (dt != null && dt.Rows.Count > 0)
+                    string storedHash = dt.Rows[0]["User_Password"].ToString();
+                    string userRole = dt.Rows[0]["User_Role"].ToString();
+                    string userId = dt.Rows[0]["User_ID"].ToString();
+
+                    // Verify password with BCrypt
+                    if (BCrypt.Net.BCrypt.Verify(password, storedHash))
                     {
-                        string storedHash = dt.Rows[0]["Password"].ToString();
-                        
-                        // Verify password with BCrypt
-                        if (BCrypt.Net.BCrypt.Verify(password, storedHash))
+                        Session["UserID"] = userId;
+                        Session["Role"] = userRole;
+
+                        // Redirect based on role
+                        if (userRole == "Admin")
                         {
-                            Session["UserID"] = dt.Rows[0]["User_ID"].ToString();
-                            Session["Role"] = role;
-                            Response.Redirect("~/User/Dashboard.aspx");
-                        }
-                        else
-                        {
-                            ShowTerminalError("Access Denied: Invalid password.");
-                        }
-                    }
-                    else
-                    {
-                        ShowTerminalError("Access Denied: User not found.");
-                    }
-                }
-                else if (role == "Admin")
-                {
-                    dt = db.ExeSP("sp_GetAdminByEmail", parametres);  // ← NEW SP
-                    
-                    if (dt != null && dt.Rows.Count > 0)
-                    {
-                        string storedHash = dt.Rows[0]["Password"].ToString();
-                        
-                        // Verify password with BCrypt
-                        if (BCrypt.Net.BCrypt.Verify(password, storedHash))
-                        {
-                            Session["AdminID"] = dt.Rows[0]["Admin_ID"].ToString();
-                            Session["Role"] = role;
+                            Session["AdminID"] = userId;
                             Response.Redirect("~/Admin/AdminHome.aspx");
                         }
                         else
                         {
-                            ShowTerminalError("Access Denied: Invalid password.");
+                            Response.Redirect("~/User/Dashboard.aspx");
                         }
                     }
                     else
                     {
-                        ShowTerminalError("Access Denied: Admin not found.");
+                        ShowTerminalError("Access Denied: Invalid password.");
                     }
+                }
+                else
+                {
+                    ShowTerminalError("Access Denied: User not found.");
                 }
             }
             catch (Exception ex)
             {
-                ShowTerminalError("System Error: Handshake failed. Please try again.");
+                ShowTerminalError("System Error: Handshake failed. Please try again."+ex);
             }
         }
 

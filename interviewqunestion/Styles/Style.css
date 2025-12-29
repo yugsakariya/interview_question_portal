@@ -551,12 +551,15 @@ body {
     background: rgba(16, 185, 129, 0.15);
     border: 1px solid rgba(16, 185, 129, 0.4);
     color: #34d399;
+<<<<<<< HEAD
+=======
 }
 
 .alert-danger {
     background: rgba(239, 68, 68, 0.15);
     border: 1px solid rgba(239, 68, 68, 0.4);
     color: #ef4444;
+>>>>>>> 162ffd9be535c17ff9fed74492f1166526d18daf
 }
 
 .alert-message i {

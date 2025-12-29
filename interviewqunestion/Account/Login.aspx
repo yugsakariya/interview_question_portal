@@ -6,156 +6,600 @@
     <title>Terminal Login - IQ Portal</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
     <style>
-        body {
-            background: radial-gradient(circle at top, #1e293b, #020617);
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0a0e27 100%);
+            font-family: 'Fira Code', monospace;
+        }
+
+        /* Physics Background Container */
+        #falling-text-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: auto;
+        }
+
+        #text-target {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .word {
+            position: absolute;
+            display: inline-block;
+            user-select: none;
+            white-space: nowrap;
+            font-family: 'Fira Code', monospace;
+            font-weight: 800;
+            font-size: 1.5rem;
+            opacity: 0.7;
+            cursor: grab;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: auto;
+        }
+
+            .word:hover {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+
+            /* Individual word colors - vibrant highlighter palette */
+            .word:nth-child(1) { color: #fbbf24; text-shadow: 0 0 20px rgba(251, 191, 36, 0.6); }
+            .word:nth-child(2) { color: #f59e0b; text-shadow: 0 0 20px rgba(245, 158, 11, 0.6); }
+            .word:nth-child(3) { color: #fb923c; text-shadow: 0 0 20px rgba(251, 146, 60, 0.6); }
+            .word:nth-child(4) { color: #facc15; text-shadow: 0 0 20px rgba(250, 204, 21, 0.6); }
+            .word:nth-child(5) { color: #fde047; text-shadow: 0 0 20px rgba(253, 224, 71, 0.6); }
+            .word:nth-child(6) { color: #a3e635; text-shadow: 0 0 20px rgba(163, 230, 53, 0.6); }
+            .word:nth-child(7) { color: #84cc16; text-shadow: 0 0 20px rgba(132, 204, 22, 0.6); }
+            .word:nth-child(8) { color: #22c55e; text-shadow: 0 0 20px rgba(34, 197, 94, 0.6); }
+            .word:nth-child(9) { color: #10b981; text-shadow: 0 0 20px rgba(16, 185, 129, 0.6); }
+            .word:nth-child(10) { color: #14b8a6; text-shadow: 0 0 20px rgba(20, 184, 166, 0.6); }
+            .word:nth-child(11) { color: #06b6d4; text-shadow: 0 0 20px rgba(6, 182, 212, 0.6); }
+            .word:nth-child(12) { color: #0ea5e9; text-shadow: 0 0 20px rgba(14, 165, 233, 0.6); }
+            .word:nth-child(13) { color: #3b82f6; text-shadow: 0 0 20px rgba(59, 130, 246, 0.6); }
+            .word:nth-child(14) { color: #6366f1; text-shadow: 0 0 20px rgba(99, 102, 241, 0.6); }
+            .word:nth-child(15) { color: #8b5cf6; text-shadow: 0 0 20px rgba(139, 92, 246, 0.6); }
+            .word:nth-child(16) { color: #a855f7; text-shadow: 0 0 20px rgba(168, 85, 247, 0.6); }
+            .word:nth-child(17) { color: #d946ef; text-shadow: 0 0 20px rgba(217, 70, 239, 0.6); }
+            .word:nth-child(18) { color: #ec4899; text-shadow: 0 0 20px rgba(236, 72, 153, 0.6); }
+            .word:nth-child(19) { color: #f43f5e; text-shadow: 0 0 20px rgba(244, 63, 94, 0.6); }
+            .word:nth-child(20) { color: #ef4444; text-shadow: 0 0 20px rgba(239, 68, 68, 0.6); }
+
+            /* Repeat pattern for more words */
+            .word:nth-child(n+21):nth-child(odd) { color: #fbbf24; text-shadow: 0 0 20px rgba(251, 191, 36, 0.6); }
+            .word:nth-child(n+21):nth-child(even) { color: #3b82f6; text-shadow: 0 0 20px rgba(59, 130, 246, 0.6); }
+            .word:nth-child(n+22):nth-child(3n) { color: #a855f7; text-shadow: 0 0 20px rgba(168, 85, 247, 0.6); }
+            .word:nth-child(n+23):nth-child(4n) { color: #10b981; text-shadow: 0 0 20px rgba(16, 185, 129, 0.6); }
+            .word:nth-child(n+24):nth-child(5n) { color: #ec4899; text-shadow: 0 0 20px rgba(236, 72, 153, 0.6); }
+
+        .highlighted {
+            font-weight: 900 !important;
+            font-size: 1.7rem !important;
+            animation: highlight-glow 2s ease-in-out infinite;
+            filter: drop-shadow(0 0 30px currentColor);
+        }
+
+        @keyframes highlight-glow {
+            0%, 100% { opacity: 0.9; filter: drop-shadow(0 0 30px currentColor); }
+            50% { opacity: 1; filter: drop-shadow(0 0 45px currentColor) drop-shadow(0 0 60px currentColor); }
+        }
+
+        /* Atmospheric effects */
+        .glow {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 1000px;
+            height: 1000px;
+            background: radial-gradient( circle, rgba(59, 130, 246, 0.1) 0%, transparent 70% );
+            z-index: 0;
+            pointer-events: none;
+            animation: pulse 6s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.2); }
+        }
+
+        .vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: radial-gradient( ellipse at center, transparent 30%, rgba(0, 0, 0, 0.6) 100% );
+            z-index: 2;
+        }
+
+        /* Scan line effect */
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient( to bottom, transparent 50%, rgba(0, 0, 0, 0.03) 51% );
+            background-size: 100% 4px;
+            z-index: 2;
+            pointer-events: none;
+            animation: scan 8s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 100%; }
+        }
+
+        /* Terminal UI */
+        .terminal-wrapper {
+            position: relative;
+            z-index: 10;
             display: flex;
             align-items: center;
             justify-content: center;
             height: 100vh;
-            margin: 0;
-            overflow: hidden;
+            padding: 20px;
+            pointer-events: none;
         }
 
         .terminal {
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            animation: boot 0.6s ease-out;
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(30px);
+            box-shadow: 0 0 100px rgba(59, 130, 246, 0.3), 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 0 1px rgba(59, 130, 246, 0.2);
+            border-radius: 16px;
+            overflow: hidden;
+            animation: boot 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: auto;
+            min-width: 320px;
+            max-width: 700px;
+            width: 100%;
         }
 
         @keyframes boot {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(40px) scale(0.95); filter: blur(10px); }
+            to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        }
+
+        .terminal-header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .terminal-header::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient( 90deg, transparent, rgba(59, 130, 246, 0.15), transparent );
+                animation: shimmer 4s infinite;
+            }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .terminal-dot {
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            margin-right: 9px;
+            box-shadow: 0 0 15px currentColor;
+        }
+
+        .terminal-title {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            font-weight: 600;
+        }
+
+        #output {
+            background: #0a0e27;
+            height: 360px;
+            overflow-y: auto;
+            padding: 24px;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+            #output::-webkit-scrollbar { width: 8px; }
+            #output::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); }
+            #output::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.4); border-radius: 4px; }
+            #output::-webkit-scrollbar-thumb:hover { background: rgba(59, 130, 246, 0.6); }
+
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            padding: 18px 24px;
+            background: #0f172a;
+            border-top: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .prompt {
+            color: #10b981;
+            font-weight: 700;
+            margin-right: 10px;
+            font-size: 16px;
+            text-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
+            animation: glow-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% { text-shadow: 0 0 15px rgba(16, 185, 129, 0.6); }
+            50% { text-shadow: 0 0 25px rgba(16, 185, 129, 0.9); }
+        }
+
+        .path {
+            color: #3b82f6;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        #terminal-input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fbbf24;
+            flex: 1;
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Text colors */
+        .text-emerald { color: #10b981; text-shadow: 0 0 8px rgba(16, 185, 129, 0.4); }
+        .text-sky { color: #38bdf8; text-shadow: 0 0 8px rgba(56, 189, 248, 0.4); }
+        .text-amber { color: #fbbf24; text-shadow: 0 0 8px rgba(251, 191, 36, 0.4); }
+        .text-gray { color: #64748b; }
+        .text-yellow { color: #facc15; text-shadow: 0 0 8px rgba(250, 204, 21, 0.4); }
+        .text-red { color: #ef4444; text-shadow: 0 0 8px rgba(239, 68, 68, 0.4); }
+        .text-purple { color: #a855f7; text-shadow: 0 0 8px rgba(168, 85, 247, 0.4); }
+
+        .fade-in { animation: fadeIn 0.4s ease-in; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-8px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Blinking cursor effect */
-        #terminal-input::after {
-            content: "|";
-            animation: blink 1s infinite;
+        .spinner {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid rgba(251, 191, 36, 0.2);
+            border-top-color: #fbbf24;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
         }
 
-        @keyframes blink { 50% { opacity: 0; } }
-        
-        #output::-webkit-scrollbar { width: 4px; }
-        #output::-webkit-scrollbar-thumb { background: #334155; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 640px) {
+            .word { font-size: 0.9rem; }
+            #output { height: 300px; font-size: 13px; }
+            .terminal { border-radius: 0; }
+        }
     </style>
 </head>
 <body>
+    <div class="glow"></div>
+    <div class="scanline"></div>
+    <div class="vignette"></div>
+
     <form id="form1" runat="server">
         <asp:HiddenField ID="hfRole" runat="server" Value="User" />
         <asp:HiddenField ID="hfEmail" runat="server" />
         <asp:HiddenField ID="hfPassword" runat="server" />
-        <asp:Button ID="btnSubmitInternal" runat="server" OnClick="btnLogin_Click" style="display:none;" />
+        <asp:Button ID="btnSubmitInternal" runat="server" OnClick="btnLogin_Click" Style="display: none;" />
 
-        <div class="terminal p-5 rounded-lg font-mono min-w-[520px] max-w-[600px]">
-            <div class="terminal-header bg-zinc-700 text-white p-2 rounded-t-lg flex items-center">
-                <span class="text-red-500 text-5xl leading-[0px] align-middle -mt-2">•</span>
-                <span class="text-yellow-500 text-5xl leading-[0px] align-middle -mt-2 ml-1">•</span>
-                <span class="text-green-500 text-5xl leading-[0px] align-middle -mt-2 ml-1">•</span>
-                <span class="ml-4 text-sm opacity-70">iq_portal --- bash</span>
-            </div>
+        <div id="falling-text-container">
+            <div id="text-target"></div>
+            <div id="canvas-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></div>
+        </div>
 
-            <div class="pl-4 pt-4 bg-gray-900 h-[300px] overflow-y-auto border-x border-zinc-800" id="output">
-                <p class="text-emerald-400 font-bold mb-2">>> Connection Established...</p>
-                <p class="text-gray-500">System: Interview Question Portal (v2.0.1)</p>
-                <p class="text-gray-500 mb-4">-----------------------------------------</p>
-                <p class="text-sky-300">Enter <span class="text-amber-400 font-bold">[1]</span> for USER LOGIN</p>
-                <p class="text-sky-300">Enter <span class="text-amber-400 font-bold">[2]</span> for ADMIN LOGIN</p>
-                <p class="text-sky-300">Enter <span class="text-amber-400 font-bold">[3]</span> to REGISTER</p>
-            </div>
+        <div class="terminal-wrapper">
+            <div class="terminal">
+                <div class="terminal-header">
+                    <div class="terminal-dot" style="background: #ef4444; cursor: pointer;" title="Admin Login" onclick="goToAdmin()"></div>
+                    <div class="terminal-dot" style="background: #f59e0b;"></div>
+                    <div class="terminal-dot" style="background: #10b981;"></div>
+                    <span class="terminal-title" style="margin-left: 14px;">IQ PORTAL - Secure Terminal</span>
+                </div>
 
-            <div class="input flex pl-4 bg-gray-900 pb-4 rounded-b-lg items-center border-x border-b border-zinc-800">
-                <span class="text-green-500 font-bold">➝</span>
-                <span class="text-sky-300 ml-2 font-bold">~</span>
-                <span class="ml-2 text-md text-gray-500 italic" id="placeholder"></span>
-                <input class="bg-transparent border-none outline-none ring-0 focus:ring-0 text-amber-400 w-full ml-1" 
-                       id="terminal-input" type="text" autofocus autocomplete="off" />
+                <div id="output"></div>
+
+                <div class="input-wrapper">
+                    <span class="prompt">➜</span>
+                    <span class="path">~</span>
+                    <input id="terminal-input" type="text" autofocus autocomplete="off" spellcheck="false" />
+                </div>
             </div>
         </div>
 
         <script>
+            function goToAdmin() {
+                if (!inputEnabled || step !== "choice") return;
+                print(`<span class="text-emerald-400">➜</span> <span class="text-amber-400">2</span>`);
+                disableInput();
+                handleStep("2");
+            }
+
+            const initFallingText = () => {
+                const container = document.getElementById('falling-text-container');
+                const textTarget = document.getElementById('text-target');
+                const canvasContainer = document.getElementById('canvas-container');
+
+                const config = {
+                    text: "LOGIN PAGE INTERVIEW QUESTION PORTAL IQ PORTAL TERMINAL STYLE USER INTERFACE MODERN INTERACTIVE ENGAGING EXPERIENCE KEYBOARD COMMANDS LINUX TERMINAL SYSTEM DATABASE ENCRYPTION SECURE ACCESS AUTHENTICATION BYTES DATA",
+                    highlightWords: ["IQ", "PORTAL", "TERMINAL", "SECURE", "LOGIN"],
+                    gravity: 0.6
+                };
+
+                const words = config.text.split(' ');
+                const { Engine, Render, World, Bodies, Runner, Mouse, MouseConstraint, Body } = Matter;
+
+                const engine = Engine.create();
+                engine.world.gravity.y = config.gravity;
+
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+
+                const render = Render.create({
+                    element: canvasContainer,
+                    engine: engine,
+                    options: {
+                        width,
+                        height,
+                        background: 'transparent',
+                        wireframes: false
+                    }
+                });
+
+                const thickness = 50;
+                const floor = Bodies.rectangle(width / 2, height + thickness / 2, width, thickness, { isStatic: true, render: { fillStyle: 'transparent' } });
+                const leftWall = Bodies.rectangle(-thickness / 2, height / 2, thickness, height, { isStatic: true, render: { fillStyle: 'transparent' } });
+                const rightWall = Bodies.rectangle(width + thickness / 2, height / 2, thickness, height, { isStatic: true, render: { fillStyle: 'transparent' } });
+
+                const wordBodies = words.map((word, index) => {
+                    const isHighlighted = config.highlightWords.includes(word);
+                    const elem = document.createElement('span');
+                    elem.className = `word ${isHighlighted ? 'highlighted' : ''}`;
+                    elem.textContent = word;
+                    textTarget.appendChild(elem);
+
+                    const x = Math.random() * (width - 200) + 100;
+                    const y = -(Math.random() * height + index * 30);
+                    const w = word.length * 18 + 30;
+                    const h = 35;
+
+                    const body = Bodies.rectangle(x, y, w, h, {
+                        restitution: 0.4,
+                        friction: 0.01,
+                        frictionAir: 0.015,
+                        density: 0.001,
+                        render: { fillStyle: 'transparent' }
+                    });
+
+                    Body.setAngularVelocity(body, (Math.random() - 0.5) * 0.08);
+                    return { elem, body };
+                });
+
+                const mouse = Mouse.create(render.canvas);
+                const mouseConstraint = MouseConstraint.create(engine, {
+                    mouse: mouse,
+                    constraint: { stiffness: 0.15, render: { visible: false } }
+                });
+
+                World.add(engine.world, [floor, leftWall, rightWall, mouseConstraint, ...wordBodies.map(wb => wb.body)]);
+
+                Runner.run(Runner.create(), engine);
+                Render.run(render);
+
+                const updateLoop = () => {
+                    wordBodies.forEach(({ body, elem }) => {
+                        const { x, y } = body.position;
+                        const angle = body.angle;
+                        elem.style.left = `${x}px`;
+                        elem.style.top = `${y}px`;
+                        elem.style.transform = `translate(-50%, -50%) rotate(${angle}rad)`;
+                    });
+                    requestAnimationFrame(updateLoop);
+                };
+                updateLoop();
+            };
+
             const input = document.getElementById("terminal-input");
             const output = document.getElementById("output");
-            const placeholder = document.getElementById("placeholder");
-
-            // Link to ASP.NET Hidden Fields
             const hfRole = document.getElementById('<%= hfRole.ClientID %>');
             const hfEmail = document.getElementById('<%= hfEmail.ClientID %>');
             const hfPassword = document.getElementById('<%= hfPassword.ClientID %>');
 
-            let step = "choice"; // Current state
+            let step = "boot";
+            let inputEnabled = false;
 
-            function print(text, color = "text-gray-400") {
+            function print(text, className = "text-gray", animate = true) {
                 const p = document.createElement("p");
-                p.className = `${color} mt-1`;
+                p.className = `${className} ${animate ? 'fade-in' : ''}`;
+                p.style.marginTop = '6px';
                 p.innerHTML = text;
                 output.appendChild(p);
                 output.scrollTop = output.scrollHeight;
             }
 
-            function typePlaceholder(text) {
-                placeholder.textContent = text;
+            function enableInput() {
+                inputEnabled = true;
+                input.disabled = false;
+                input.focus();
             }
 
-            typePlaceholder("Enter choice...");
+            function disableInput() {
+                inputEnabled = false;
+                input.disabled = true;
+            }
+
+            setTimeout(() => {
+                print('<span class="text-emerald" style="font-weight: 700;">╔════════════════════════════════════════╗</span>', '', false);
+                print('<span class="text-emerald" style="font-weight: 700;">║</span>  <span class="text-purple">PHYSICS ENGINE INITIALIZED...</span>      <span class="text-emerald" style="font-weight: 700;">║</span>', '', false);
+                print('<span class="text-emerald" style="font-weight: 700;">╚════════════════════════════════════════╝</span>', '', false);
+            }, 400);
+
+            setTimeout(() => {
+                print('System: <span class="text-sky">IQ Portal v2.5.1</span>', 'text-gray');
+                print('Interface: <span class="text-purple">Terminal UI Active</span>', 'text-gray');
+                print('Security: <span class="text-yellow">256-bit Encrypted</span>', 'text-gray');
+            }, 1000);
+
+            setTimeout(() => {
+                print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'text-gray');
+            }, 1500);
+
+            setTimeout(() => {
+                print('');
+                print('<span class="text-sky">▶ Enter <span class="text-amber">[1]</span> for USER LOGIN</span>');
+                print('<span class="text-sky">▶ Enter <span class="text-amber">[2]</span> to REGISTER</span>');
+                print('');
+                print('<span class="text-gray" style="font-style: italic; font-size: 12px;">💡 Tip: Press ESC to go back</span>', 'text-gray');
+                print('');
+                step = "choice";
+                enableInput();
+            }, 2000);
 
             input.addEventListener("keydown", (e) => {
-                if (e.key === "Enter") {
+                if (e.key === "Escape" && inputEnabled) {
+                    e.preventDefault();
+                    handleEsc();
+                    return;
+                }
+                if (e.key === "Enter" && inputEnabled) {
                     e.preventDefault();
                     const val = input.value.trim();
                     if (!val && step !== "password") return;
-                    
-                    // Print the command entered
-                    print(`<span class="text-green-500">➝</span> <span class="text-sky-300">~</span> <span class="text-amber-400">${step === 'password' ? '********' : val}</span>`);
+                    const displayVal = step === 'password' ? '•'.repeat(8) : val;
+                    print(`<span class="prompt">➜</span> <span class="text-amber">${displayVal}</span>`, '', false);
                     input.value = "";
-
+                    disableInput();
                     handleStep(val);
                 }
             });
 
-            function handleStep(val) {
-                switch (step) {
-                    case "choice":
-                        if (val === "1") {
-                            hfRole.value = "User";
-                            print("Access Level: <span class='text-white'>USER</span>", "text-emerald-500");
-                            print("Enter Email Address:", "text-sky-300");
-                            step = "email";
-                        } else if (val === "2") {
-                            hfRole.value = "Admin";
-                            print("Access Level: <span class='text-white'>ADMIN</span>", "text-emerald-500");
-                            print("Enter Email Address:", "text-sky-300");
-                            step = "email";
-                        } else if (val === "3") {
-                            print("Redirecting to Registration...", "text-yellow-400");
-                            setTimeout(() => window.location.href = "Register.aspx", 500);
-                        } else {
-                            print("Invalid Option. Choose 1, 2, or 3.", "text-red-500");
-                        }
-                        break;
-
-                    case "email":
-                        if (val.includes("@")) {
-                            hfEmail.value = val;
-                            print("Identity Verified.", "text-emerald-500");
-                            print("Enter Password:", "text-sky-300");
-                            input.type = "password"; // Hide password
-                            step = "password";
-                        } else {
-                            print("Invalid Email Format.", "text-red-500");
-                        }
-                        break;
-
-                    case "password":
-                        hfPassword.value = val;
-                        print("Authenticating with IQ-Core...", "text-yellow-400");
-                        // Trigger the actual ASP.NET Postback
-                        document.getElementById('<%= btnSubmitInternal.ClientID %>').click();
-                        break;
+            function handleEsc() {
+                if (step === "password") {
+                    print('<span class="text-yellow">⟵ Returning to email input...</span>', 'text-yellow');
+                    input.type = "text";
+                    step = "email";
+                    setTimeout(() => {
+                        print('<span class="text-sky">📧 Enter Email Address:</span>', 'text-sky');
+                        enableInput();
+                    }, 300);
+                } else if (step === "email") {
+                    print('<span class="text-yellow">⟵ Returning to main menu...</span>', 'text-yellow');
+                    step = "choice";
+                    setTimeout(() => {
+                        print('');
+                        print('<span class="text-sky">▶ Enter <span class="text-amber">[1]</span> for USER LOGIN</span>');
+                        print('<span class="text-sky">▶ Enter <span class="text-amber">[2]</span> to REGISTER</span>');
+                        print('');
+                        enableInput();
+                    }, 300);
                 }
             }
 
-            // Keep focus on input
-            document.addEventListener("click", () => input.focus());
+            function handleStep(val) {
+                if (step === "choice") {
+                    if (val === "1") {
+                        hfRole.value = "User";
+                        print('<span class="text-emerald">✓ USER MODE SELECTED</span>', 'text-emerald');
+                        print('<span class="text-sky">📧 Enter Email Address:</span>', 'text-sky');
+                        step = "email";
+                        enableInput();
+                    } else if (val === "2") {
+                        print('<span class="text-purple">↗ Redirecting to registration...</span>', 'text-purple');
+                        setTimeout(() => {
+                            window.location.href = '<%= ResolveUrl("~/Account/Register.aspx") %>';
+                        }, 900);
+                    } else {
+                        print('<span class="text-red">✗ Invalid selection. Enter 1, 2</span>', 'text-red');
+                        enableInput();
+                    }
+                } else if (step === "email") {
+                    if (val.includes('@') && val.includes('.')) {
+                        hfEmail.value = val;
+                        setTimeout(() => {
+                            print('<span class="text-emerald">✓</span> Email verified successfully', 'text-emerald');
+                            print('');
+                            print('<span class="text-sky">🔒 Enter Password:</span>', 'text-sky');
+                            input.type = "password";
+                            step = "password";
+                            enableInput();
+                        }, 400);
+                    } else {
+                        setTimeout(() => {
+                            print('<span class="text-red">✗</span> Invalid email format. Must contain @ and domain', 'text-red');
+                            enableInput();
+                        }, 300);
+                    }
+                } else if (step === "password") {
+                    hfPassword.value = val;
+                    input.type = "text";
+                    setTimeout(() => {
+                        print('');
+                        print('<span class="spinner"></span><span class="text-yellow">Authenticating credentials...</span>', 'text-yellow');
+                    }, 300);
+                    setTimeout(() => {
+                        print('<span class="text-emerald">✓</span> Establishing secure connection...', 'text-emerald');
+                    }, 900);
+                    setTimeout(() => {
+                        print('<span class="text-emerald">✓</span> Access granted. Redirecting...', 'text-emerald');
+                    }, 1400);
+                    setTimeout(() => {
+                        document.getElementById('<%= btnSubmitInternal.ClientID %>').click();
+                    }, 1900);
+                }
+            }
+
+            document.addEventListener("click", (e) => {
+                if (inputEnabled && !e.target.classList.contains('word')) {
+                    input.focus();
+                }
+            });
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initFallingText);
+            } else {
+                initFallingText();
+            }
         </script>
     </form>
 </body>
