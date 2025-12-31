@@ -41,8 +41,22 @@ namespace interviewqunestion.Account
                     string userRole = dt.Rows[0]["User_Role"].ToString();
                     string userId = dt.Rows[0]["User_ID"].ToString();
 
-                    // Verify password with BCrypt
-                    if (BCrypt.Net.BCrypt.Verify(password, storedHash))
+                    bool isAuthenticated = false;
+
+                    // For Admin: use plain text comparison (no hashing)
+                    // For Users: use BCrypt verification
+                    if (userRole == "Admin")
+                    {
+                        // Plain text comparison for admin
+                        isAuthenticated = (password == storedHash);
+                    }
+                    else
+                    {
+                        // BCrypt verification for regular users
+                        isAuthenticated = BCrypt.Net.BCrypt.Verify(password, storedHash);
+                    }
+
+                    if (isAuthenticated)
                     {
                         Session["UserID"] = userId;
                         Session["Role"] = userRole;

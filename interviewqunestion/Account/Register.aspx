@@ -594,17 +594,42 @@
                             enableInput();
                         }, 300);
                     } else {
-                        hfEmail.value = val;
-                        setTimeout(() => {
-                            print('<span class="text-emerald">✓</span> Email verified successfully', 'text-emerald');
-                            print('');
-                            print('<span class="text-sky">🔒 Step 4/4: Security Protocol</span>', 'text-sky');
-                            print('<span class="text-amber">Create Security Key (min 6 characters):</span>', 'text-amber');
-                            print('');
-                            input.type = "password";
-                            step = "password";
+                        // Show checking message
+                        print('<span class="spinner"></span><span class="text-yellow">Checking email availability...</span>', 'text-yellow');
+                        
+                        // AJAX call to check if email exists
+                        fetch('Register.aspx/CheckEmailExists', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ email: val })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.d === true) {
+                                // Email already exists
+                                print('<span class="text-red">✗</span> Email already registered! Please use a different email.', 'text-red');
+                                print('');
+                                print('<span class="text-amber">Enter Email Address:</span>', 'text-amber');
+                                enableInput();
+                            } else {
+                                // Email is available, proceed
+                                hfEmail.value = val;
+                                print('<span class="text-emerald">✓</span> Email verified and available', 'text-emerald');
+                                print('');
+                                print('<span class="text-sky">🔒 Step 4/4: Security Protocol</span>', 'text-sky');
+                                print('<span class="text-amber">Create Security Key (min 6 characters):</span>', 'text-amber');
+                                print('');
+                                input.type = "password";
+                                step = "password";
+                                enableInput();
+                            }
+                        })
+                        .catch(error => {
+                            print('<span class="text-red">✗</span> Network error. Please try again.', 'text-red');
                             enableInput();
-                        }, 400);
+                        });
                     }
                 }
                 else if (step === "password") {

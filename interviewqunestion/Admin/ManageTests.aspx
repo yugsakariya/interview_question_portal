@@ -77,7 +77,7 @@
                     <asp:BoundField DataField="TotalMarks" HeaderText="Marks">
                         <ItemStyle CssClass="col-marks" />
                     </asp:BoundField>
-                    <asp:BoundField DataField="DurationMinutes" HeaderText="Duration (Min)">
+                    <asp:BoundField DataField="Duration_Minutes" HeaderText="Duration (Min)">
                         <ItemStyle CssClass="col-duration" />
                     </asp:BoundField>
                     <asp:TemplateField HeaderText="Actions">

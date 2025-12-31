@@ -21,10 +21,10 @@ namespace interviewqunestion.Admin
             }
             string adminID = Session["AdminID"] as String;
             Dictionary<string, dynamic> para = new Dictionary<string, dynamic>();
-            para["@p_Admin_ID"] = adminID;
-            dt = db.ExeSP("sp_Get_admin_ByID", para);
+            para["@p_User_ID"] = adminID;
+            dt = db.ExeSP("sp_Get_User_ByID", para);
 
-            lblUser.Text = dt.Rows[0]["Admin_Name"].ToString();
+            lblUser.Text = dt.Rows[0]["User_FirstName"].ToString();
             lblUserInitial.Text = lblUser.Text[0].ToString().ToUpper();
         }
 

@@ -3,12 +3,23 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Web.UI;
+using System.Web.Services;
 using BCrypt.Net;
 
 namespace interviewqunestion.Account
 {
     public partial class Register : System.Web.UI.Page
     {
+        [WebMethod]
+        public static bool CheckEmailExists(string email)
+        {
+            DataLayer.DBHelper db = new DataLayer.DBHelper();
+            Dictionary<string, dynamic> para = new Dictionary<string, dynamic>();
+            para["@p_Email"] = email;
+            DataTable dtExists = db.ExeSP("sp_Check_User_Exists", para);
+            return dtExists != null && dtExists.Rows.Count > 0;
+        }
+
         protected void btnRegister_Click(object sender, EventArgs e)
         {
             string f_name = hfFirstName.Value;
@@ -20,17 +31,6 @@ namespace interviewqunestion.Account
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(pass);
 
             DataLayer.DBHelper db = new DataLayer.DBHelper();
-
-            // Check if user exists
-            Dictionary<string, dynamic> para = new Dictionary<string, dynamic>();
-            para["@p_Email"] = email;
-            DataTable dtExists = db.ExeSP("sp_Check_User_Exists", para);
-
-            if (dtExists != null && dtExists.Rows.Count > 0)
-            {
-                ShowTerminalError("Fatal: Email ID already in system. Access denied.");
-                return;
-            }
 
             // Perform Registration with hashed password
             Dictionary<string, dynamic> parametres = new Dictionary<string, dynamic>();
@@ -54,7 +54,9 @@ namespace interviewqunestion.Account
 
         private void ShowTerminalError(string message)
         {
-            string script = $"print('{message}', 'text-red-500'); step='firstName'; input.disabled=false; input.type='text';";
+            // Wrap in setTimeout to ensure the custom print function is defined before calling it
+            // This prevents the browser's native window.print() from being called
+            string script = $"setTimeout(function() {{ if(typeof print === 'function') {{ print('{message}', 'text-red'); step='firstName'; input.disabled=false; input.type='text'; enableInput(); }} }}, 100);";
             ClientScript.RegisterStartupScript(this.GetType(), "TerminalError", script, true);
         }
     }
