@@ -51,16 +51,10 @@
                     </div>
 
                     <div class="test-footer">
-                        <div class="test-info">
-                            <i class="fas fa-info-circle"></i>
-                            <span>Ready to begin</span>
-                        </div>
-                        <asp:HyperLink runat="server"
-                            NavigateUrl='<%# "~/QuizAttempt.aspx?testId=" + Eval("Test_ID") %>'
-                            CssClass="btn-start">
-                            <i class="fas fa-play"></i>
-                            Start Test
-                        </asp:HyperLink>
+                        <%# Convert.ToInt32(Eval("IsCompleted")) == 1 ? 
+                            "<div class='test-info completed'><i class='fas fa-check-circle' style='color:#10b981;'></i><span style='color:#10b981;font-weight:600;'>Completed</span></div><span class='btn-completed' style='background:#d1d5db;color:#6b7280;cursor:not-allowed;padding:0.5rem 1rem;border-radius:0.5rem;'><i class='fas fa-lock'></i> Completed</span>" :
+                            "<div class='test-info'><i class='fas fa-info-circle'></i><span>Ready to begin</span></div><a href='QuizAttempt.aspx?testId=" + Eval("Test_ID") + "' class='btn-start'><i class='fas fa-play'></i> Start Test</a>"
+                        %>
                     </div>
                 </div>
             </ItemTemplate>
@@ -96,14 +90,12 @@
                 <asp:BoundField DataField="TotalMarks" HeaderText="Marks" />
                 <asp:BoundField DataField="DurationMinutes" HeaderText="Duration (min)" />
 
-                <asp:TemplateField HeaderText="Action">
+                <asp:TemplateField HeaderText="Status">
                     <ItemTemplate>
-                        <asp:HyperLink runat="server"
-                            NavigateUrl='<%# "~/QuizAttempt.aspx?testId=" + Eval("Test_ID") %>'
-                            CssClass="btn-start">
-                            <i class="fas fa-play"></i>
-                            Start
-                        </asp:HyperLink>
+                        <%# Convert.ToInt32(Eval("IsCompleted")) == 1 ? 
+                            "<span style='color:#10b981;font-weight:600;'><i class='fas fa-check-circle'></i> Completed</span>" :
+                            "<a href='QuizAttempt.aspx?testId=" + Eval("Test_ID") + "' class='btn-start'><i class='fas fa-play'></i> Start</a>"
+                        %>
                     </ItemTemplate>
                 </asp:TemplateField>
             </Columns>

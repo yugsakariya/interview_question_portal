@@ -15,14 +15,63 @@ namespace interview_questions.User
         DBHelper db = new DBHelper();
         protected void Page_Load(object sender, EventArgs e)
         {
-            //Dictionary<string, dynamic> para = new Dictionary<string, dynamic>();
-            ////para["@USER_ID"] = Session["UserID"].ToString();
-            //dt = db.ExeSP("sp_GetAll_Tests_BY_USER_ID", para);
-            //lblTests.Text = dt.Rows.Count.ToString();
-            //para.Clear();
-            //para["@USERID"] = Session["UserID"].ToString();
-            //dt = db.ExeSP("sp_GetAll_Bookmarks_BY_UserID", para);
-            //lblBookmarks.Text = dt.Rows.Count.ToString();
+            if (!IsPostBack)
+            {
+                if (Session["UserID"] == null)
+                {
+                    Response.Redirect("~/Account/Login.aspx");
+                    return;
+                }
+
+                int userId = Convert.ToInt32(Session["UserID"]);
+                LoadDashboardStats(userId);
+            }
+        }
+
+        private void LoadDashboardStats(int userId)
+        {
+            try
+            {
+                Dictionary<string, dynamic> para = new Dictionary<string, dynamic>();
+                para["@p_User_ID"] = userId;
+
+                // Get tests attempted count
+                dt = db.ExeSP("sp_GetUserTestAttemptCount", para);
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    lblTests.Text = dt.Rows[0]["TestCount"].ToString();
+                }
+                else
+                {
+                    lblTests.Text = "0";
+                }
+
+                // Get bookmarks count
+                para.Clear();
+                para["@p_User_ID"] = userId;
+                dt = db.ExeSP("sp_GetUserBookmarkCount", para);
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    lblBookmarks.Text = dt.Rows[0]["BookmarkCount"].ToString();
+                }
+                else
+                {
+                    lblBookmarks.Text = "0";
+                }
+
+                // Get user name for welcome message
+                para.Clear();
+                para["@p_User_ID"] = userId;
+                dt = db.ExeSP("sp_Get_User_ByID", para);
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    lblUser.Text = dt.Rows[0]["User_FirstName"].ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Dashboard error: " + ex.Message);
+            }
         }
     }
 }

@@ -99,4 +99,48 @@
         </div>
     </asp:Panel>
 
+    <!-- Hidden field for storing test duration -->
+    <asp:HiddenField ID="hfDuration" runat="server" />
+
+    <!-- Timer Script -->
+    <script type="text/javascript">
+        var timerDisplay = document.getElementById('<%= lblTimer.ClientID %>');
+        var submitBtn = document.getElementById('<%= btnSubmitTest.ClientID %>');
+        
+        // Get duration from the timer display (format: "MM:SS")
+        var timerText = timerDisplay ? timerDisplay.innerText : "30:00";
+        var parts = timerText.split(':');
+        var totalSeconds = (parseInt(parts[0]) * 60) + (parseInt(parts[1]) || 0);
+        
+        function updateTimer() {
+            if (totalSeconds <= 0) {
+                timerDisplay.innerText = "00:00";
+                // Auto-submit the test
+                if (submitBtn) {
+                    submitBtn.click();
+                }
+                return;
+            }
+            
+            totalSeconds--;
+            var minutes = Math.floor(totalSeconds / 60);
+            var seconds = totalSeconds % 60;
+            timerDisplay.innerText = (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+            
+            // Change color when time is running low
+            if (totalSeconds <= 60) {
+                timerDisplay.style.color = "#ef4444";
+            } else if (totalSeconds <= 300) {
+                timerDisplay.style.color = "#f59e0b";
+            }
+            
+            setTimeout(updateTimer, 1000);
+        }
+        
+        // Start the timer when page loads
+        if (timerDisplay && totalSeconds > 0) {
+            setTimeout(updateTimer, 1000);
+        }
+    </script>
+
 </asp:Content>

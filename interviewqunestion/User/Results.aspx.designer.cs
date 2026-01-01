@@ -15,12 +15,18 @@ namespace interviewquestion.User
     {
 
         /// <summary>
-        /// gvResults control.
+        /// pnlResults control.
         /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView gvResults;
+        protected global::System.Web.UI.WebControls.Panel pnlResults;
+
+        /// <summary>
+        /// rptResults control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Repeater rptResults;
+
+        /// <summary>
+        /// pnlEmpty control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Panel pnlEmpty;
     }
 }

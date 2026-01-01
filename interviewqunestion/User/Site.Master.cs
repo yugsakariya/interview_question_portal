@@ -15,17 +15,24 @@ namespace interviewqunestion
         DBHelper db = new DBHelper();
         protected void Page_Load(object sender, EventArgs e)
         {
-            //if (Session["UserID"] == null)
-            //{
-            //    Response.Redirect("~/Account/Login.aspx");
-            //    return;
-            //}
-            //string userID = Session["UserID"] as String;
-            //Dictionary<string, dynamic> para = new Dictionary<string, dynamic>();
-            //para["@p_User_ID"] = userID;
-            //dt = db.ExeSP("sp_Get_User_ByID", para);
+            if (Session["UserID"] == null)
+            {
+                Response.Redirect("~/Account/Login.aspx");
+                return;
+            }
+            
+            if (!IsPostBack)
+            {
+                string userID = Session["UserID"].ToString();
+                Dictionary<string, dynamic> para = new Dictionary<string, dynamic>();
+                para["@p_User_ID"] = Convert.ToInt32(userID);
+                dt = db.ExeSP("sp_Get_User_ByID", para);
 
-            //lblUser.Text = dt.Rows[0]["User_FirstName"].ToString() + " " + dt.Rows[0]["User_LastName"].ToString();
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    lblUser.Text = dt.Rows[0]["User_FirstName"].ToString() + " " + dt.Rows[0]["User_LastName"].ToString();
+                }
+            }
         }
 
         protected void btnLogout_Click(object sender, EventArgs e)

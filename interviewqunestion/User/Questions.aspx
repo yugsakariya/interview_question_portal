@@ -67,12 +67,17 @@
         
         <div class="table-wrapper">
             <asp:GridView ID="gvQuestions" runat="server"
-                CssClass="table questions-table"
+                CssClass="questions-grid"
                 AutoGenerateColumns="False"
                 DataKeyNames="Question_ID"
                 OnRowCommand="gvQuestions_RowCommand"
                 ShowHeaderWhenEmpty="True"
                 EmptyDataText="">
+                
+                <HeaderStyle BackColor="#6366f1" ForeColor="White" Font-Bold="True" />
+                <RowStyle BackColor="#1f2937" ForeColor="#e5e7eb" />
+                <AlternatingRowStyle BackColor="#374151" ForeColor="#e5e7eb" />
+                
                 <Columns>
                     <asp:TemplateField HeaderText="Question">
                         <ItemTemplate>
@@ -126,5 +131,68 @@
         </div>
 
     </div>
+
+    <style>
+        .questions-grid {
+            width: 100%;
+            border-collapse: collapse;
+            background: #1f2937;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .questions-grid th {
+            padding: 1rem 1.5rem !important;
+            text-align: left !important;
+            font-weight: 600 !important;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+            color: #fff !important;
+        }
+        .questions-grid td {
+            padding: 1rem 1.5rem !important;
+            border-bottom: 1px solid #374151 !important;
+            color: #e5e7eb !important;
+            background: #1f2937 !important;
+        }
+        .questions-grid tr:nth-child(even) td {
+            background: #374151 !important;
+        }
+        .questions-grid tr:hover td {
+            background: #4b5563 !important;
+        }
+        .question-text {
+            color: #e5e7eb;
+            line-height: 1.5;
+        }
+        .badge-category, .badge-company {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 0.75rem;
+            background: rgba(99, 102, 241, 0.2);
+            color: #a5b4fc;
+            border-radius: 6px;
+            font-size: 0.875rem;
+        }
+        .badge-company {
+            background: rgba(16, 185, 129, 0.2);
+            color: #6ee7b7;
+        }
+        .btn-bookmark {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: #6366f1;
+            color: #fff !important;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.875rem;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-bookmark:hover {
+            background: #4f46e5;
+        }
+    </style>
 
 </asp:Content>

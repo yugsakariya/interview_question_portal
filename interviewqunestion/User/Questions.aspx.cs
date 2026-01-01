@@ -64,6 +64,10 @@ namespace interviewquestion.User
             {
                 // Get all questions from database
                 DataTable allQuestions = db.ExeSP("sp_GetAll_Questions", null);
+                
+                // Debug: show count
+                ShowMessage("Questions found: " + (allQuestions != null ? allQuestions.Rows.Count.ToString() : "null"), true);
+                
                 // Create filtered table
                 DataTable filteredQuestions = allQuestions.Clone();
                 
