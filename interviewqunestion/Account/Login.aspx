@@ -555,15 +555,38 @@
                     }
                 } else if (step === "email") {
                     if (val.includes('@') && val.includes('.')) {
-                        hfEmail.value = val;
-                        setTimeout(() => {
-                            print('<span class="text-emerald">✓</span> Email verified successfully', 'text-emerald');
-                            print('');
-                            print('<span class="text-sky">🔒 Enter Password:</span>', 'text-sky');
-                            input.type = "password";
-                            step = "password";
+                        // Show checking message
+                        print('<span class="spinner"></span><span class="text-yellow">Checking email in database...</span>', 'text-yellow');
+                        
+                        // AJAX call to check if email exists in database
+                        fetch('Login.aspx/CheckEmailExists', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ email: val })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            const result = data.d;
+                            if (result.success) {
+                                hfEmail.value = val;
+                                print('<span class="text-emerald">✓</span> Email verified successfully', 'text-emerald');
+                                print('');
+                                print('<span class="text-sky">🔒 Enter Password:</span>', 'text-sky');
+                                input.type = "password";
+                                step = "password";
+                                enableInput();
+                            } else {
+                                print('<span class="text-red">✗ ' + result.message + '</span>', 'text-red');
+                                enableInput();
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            print('<span class="text-red">✗ System error. Please try again.</span>', 'text-red');
                             enableInput();
-                        }, 400);
+                        });
                     } else {
                         setTimeout(() => {
                             print('<span class="text-red">✗</span> Invalid email format. Must contain @ and domain', 'text-red');
@@ -571,21 +594,49 @@
                         }, 300);
                     }
                 } else if (step === "password") {
-                    hfPassword.value = val;
                     input.type = "text";
-                    setTimeout(() => {
+                    print('');
+                    print('<span class="spinner"></span><span class="text-yellow">Authenticating credentials...</span>', 'text-yellow');
+                    
+                    // AJAX call to verify credentials
+                    fetch('Login.aspx/VerifyCredentials', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email: hfEmail.value, password: val })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        const result = data.d;
+                        if (result.success) {
+                            // Password correct - show success messages and redirect
+                            print('<span class="text-emerald">✓</span> Establishing secure connection...', 'text-emerald');
+                            setTimeout(() => {
+                                print('<span class="text-emerald">✓</span> Access granted. Redirecting...', 'text-emerald');
+                            }, 500);
+                            setTimeout(() => {
+                                // Redirect using the URL from server
+                                const redirectUrl = result.redirectUrl.replace('~/', '<%= ResolveUrl("~/") %>');
+                                window.location.href = redirectUrl;
+                            }, 1000);
+                        } else {
+                            // Password incorrect - show error and allow retry
+                            print('<span class="text-red">✗ ' + result.message + '</span>', 'text-red');
+                            print('');
+                            print('<span class="text-sky">🔒 Enter Password:</span>', 'text-sky');
+                            input.type = "password";
+                            enableInput();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        print('<span class="text-red">✗ System error. Please try again.</span>', 'text-red');
                         print('');
-                        print('<span class="spinner"></span><span class="text-yellow">Authenticating credentials...</span>', 'text-yellow');
-                    }, 300);
-                    setTimeout(() => {
-                        print('<span class="text-emerald">✓</span> Establishing secure connection...', 'text-emerald');
-                    }, 900);
-                    setTimeout(() => {
-                        print('<span class="text-emerald">✓</span> Access granted. Redirecting...', 'text-emerald');
-                    }, 1400);
-                    setTimeout(() => {
-                        document.getElementById('<%= btnSubmitInternal.ClientID %>').click();
-                    }, 1900);
+                        print('<span class="text-sky">🔒 Enter Password:</span>', 'text-sky');
+                        input.type = "password";
+                        enableInput();
+                    });
                 }
             }
 
