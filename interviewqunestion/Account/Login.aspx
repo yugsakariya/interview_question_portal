@@ -322,7 +322,7 @@
         <asp:HiddenField ID="hfRole" runat="server" Value="User" />
         <asp:HiddenField ID="hfEmail" runat="server" />
         <asp:HiddenField ID="hfPassword" runat="server" />
-        <asp:Button ID="btnSubmitInternal" runat="server" OnClick="btnLogin_Click" Style="display: none;" />
+        <asp:Button ID="btnSubmitInternal" runat="server" Style="display: none;" OnClick="btnLogin_Click" />
 
         <div id="falling-text-container">
             <div id="text-target"></div>

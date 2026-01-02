@@ -42,9 +42,6 @@ namespace interview_questions.User
                     rptTests.DataSource = dt;
                     rptTests.DataBind();
 
-                    // Bind to GridView as fallback
-                    gvTests.DataSource = dt;
-                    gvTests.DataBind();
 
                     // Count only available (not completed) tests
                     int availableCount = 0;
@@ -61,8 +58,7 @@ namespace interview_questions.User
                     lblTestCount.Text = "0 Tests Available";
                     rptTests.DataSource = null;
                     rptTests.DataBind();
-                    gvTests.DataSource = null;
-                    gvTests.DataBind();
+
                 }
             }
             catch (Exception ex)

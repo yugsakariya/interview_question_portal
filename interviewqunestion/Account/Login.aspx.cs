@@ -65,11 +65,13 @@ namespace interviewqunestion.Account
                         if (userRole == "Admin")
                         {
                             Session["AdminID"] = userId;
-                            Response.Redirect("~/Admin/AdminHome.aspx");
+                            Response.Redirect("~/Admin/AdminHome.aspx", false);
+                            Context.ApplicationInstance.CompleteRequest();
                         }
                         else
                         {
-                            Response.Redirect("~/User/Dashboard.aspx");
+                            Response.Redirect("~/User/Dashboard.aspx", false);
+                            Context.ApplicationInstance.CompleteRequest();
                         }
                     }
                     else
@@ -84,7 +86,7 @@ namespace interviewqunestion.Account
             }
             catch (Exception ex)
             {
-                ShowTerminalError("System Error: Handshake failed. Please try again."+ex);
+                ShowTerminalError("System Error: " + ex.Message);
             }
         }
 

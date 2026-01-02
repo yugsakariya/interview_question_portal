@@ -738,10 +738,10 @@ body::before {
 </div>
 
 <div class="user-nav-section ms-lg-4">
-<div class="user-info">
+<a href="<%= ResolveUrl("~/User/Profile.aspx") %>" class="user-info" style="text-decoration: none;">
 <div class="user-avatar"><i class="fas fa-user"></i></div>
 <asp:Label ID="lblUser" runat="server" CssClass="user-name"></asp:Label>
-</div>
+</a>
 
 <asp:LinkButton ID="btnLogout" runat="server" CssClass="btn-logout" OnClick="btnLogout_Click" OnClientClick="return handleLogoutAnimation();">
     <i class="fas fa-sign-out-alt" id="logoutIcon"></i>

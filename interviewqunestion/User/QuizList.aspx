@@ -61,55 +61,6 @@
         </asp:Repeater>
     </div>
 
-    <!-- Fallback GridView (if needed) -->
-    <div class="table-wrapper">
-        <asp:GridView ID="gvTests" runat="server" 
-            AutoGenerateColumns="False"
-            CssClass="table" 
-            DataKeyNames="Test_ID"
-            ShowHeaderWhenEmpty="True"
-            EmptyDataText="">
-            <Columns>
-                <asp:TemplateField HeaderText="Test Name">
-                    <ItemTemplate>
-                        <div style="font-weight: 600; color: #1f2937;">
-                            <%# Eval("Test_Name") %>
-                        </div>
-                    </ItemTemplate>
-                </asp:TemplateField>
 
-                <asp:TemplateField HeaderText="Category">
-                    <ItemTemplate>
-                        <span class="test-category">
-                            <i class="fas fa-folder"></i>
-                            <%# Eval("Category_Name") %>
-                        </span>
-                    </ItemTemplate>
-                </asp:TemplateField>
-
-                <asp:BoundField DataField="TotalMarks" HeaderText="Marks" />
-                <asp:BoundField DataField="DurationMinutes" HeaderText="Duration (min)" />
-
-                <asp:TemplateField HeaderText="Status">
-                    <ItemTemplate>
-                        <%# Convert.ToInt32(Eval("IsCompleted")) == 1 ? 
-                            "<span style='color:#10b981;font-weight:600;'><i class='fas fa-check-circle'></i> Completed</span>" :
-                            "<a href='QuizAttempt.aspx?testId=" + Eval("Test_ID") + "' class='btn-start'><i class='fas fa-play'></i> Start</a>"
-                        %>
-                    </ItemTemplate>
-                </asp:TemplateField>
-            </Columns>
-
-            <EmptyDataTemplate>
-                <div class="empty-state">
-                    <div class="empty-state-icon">
-                        <i class="fas fa-clipboard-list"></i>
-                    </div>
-                    <h3>No tests available</h3>
-                    <p>Check back later for new tests</p>
-                </div>
-            </EmptyDataTemplate>
-        </asp:GridView>
-    </div>
 
 </asp:Content>

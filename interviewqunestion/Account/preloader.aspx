@@ -1,159 +1,213 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-<head>
+<head runat="server">
 <meta charset="UTF-8" />
-<title>Loading...</title>
+<title>Interview Question Portal | Loading</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 <style>
-/* ================= BASE ================= */
-html, body {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    background: #0a0a0f;
-    overflow: hidden;
-    font-family: Arial, sans-serif;
+:root {
+  --bg: #020617;
+  --text: #e5e7eb;
+  --muted: #9ca3af;
+  --accent: #38bdf8;
+  --grid: rgba(255,255,255,0.06);
 }
 
-/* From Uiverse.io by Vosoone */
-.main-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    width: 100%;
-    transition: opacity 0.6s ease, transform 0.6s ease;
+* {
+  box-sizing: border-box;
+  font-family: "JetBrains Mono", monospace;
 }
 
-.fade-out {
-    opacity: 0;
-    transform: scale(0.96);
+body {
+  margin: 0;
+  background: radial-gradient(circle at top, #0f172a, #020617);
+  color: var(--text);
+  height: 100vh;
+  overflow: hidden;
 }
 
-/* Loader */
-.loader {
-    width: 100%;
-    max-width: 900px;
+/* Layout */
+.wrapper {
+  display: flex;
+  height: 100vh;
+  padding: 40px;
 }
 
-/* Traces */
-.trace-bg {
-    stroke: #333;
-    stroke-width: 1.8px;
-    fill: none;
+/* Left */
+.left {
+  width: 55%;
 }
 
-.trace-flow {
-    stroke-width: 1.8px;
-    fill: none;
-    stroke-dasharray: 40 400;
-    stroke-dashoffset: 438;
-    filter: drop-shadow(0 0 6px currentColor);
-    animation: flow 3s cubic-bezier(0.5, 0, 0.9, 1) infinite;
+/* Branding */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 25px;
 }
 
-/* Colors */
-.yellow { stroke: #ffea00; color: #ffea00; }
-.blue   { stroke: #00ccff; color: #00ccff; }
-.green  { stroke: #00ff15; color: #00ff15; }
-.purple { stroke: #9900ff; color: #9900ff; }
-.red    { stroke: #ff3300; color: #ff3300; }
+.brand span {
+  color: var(--accent);
+}
 
-@keyframes flow {
-    to { stroke-dashoffset: 0; }
+/* Logs */
+.logs {
+  font-size: 14px;
+  line-height: 1.9;
+}
+
+.log {
+  opacity: 0;
+  animation: fadeIn 0.6s forwards;
+}
+
+.log time {
+  color: var(--muted);
+  margin-right: 10px;
+}
+
+/* Terminal */
+.terminal {
+  margin-top: 25px;
+  padding: 20px;
+  border: 1px dashed rgba(255,255,255,0.15);
+}
+
+.ascii {
+  white-space: pre;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* Footer */
+.footer {
+  position: absolute;
+  bottom: 40px;
+  left: 40px;
+  font-size: 14px;
+  color: var(--accent);
+}
+
+/* Right */
+.right {
+  width: 45%;
+  position: relative;
+}
+
+/* Grid */
+.grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 120px 120px;
+  mask-image: radial-gradient(circle at center, black 25%, transparent 75%);
+}
+
+/* Loading */
+.loading {
+  position: absolute;
+  bottom: 40px;
+  right: 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--muted);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Animations */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
 }
 </style>
 </head>
 
 <body>
+<form id="form1" runat="server">
 
-<!-- ================= PRELOADER ================= -->
-<div id="preloader" class="main-container">
-  <div class="loader">
+<div class="wrapper">
 
-<svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- LEFT -->
+  <div class="left">
+    <div class="brand">
+      🎯 <span>Interview Question Portal</span>
+    </div>
 
-  <defs>
-    <linearGradient id="chipGradient" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#2d2d2d" />
-      <stop offset="100%" stop-color="#0f0f0f" />
-    </linearGradient>
+    <div class="logs" id="logs"></div>
 
-    <linearGradient id="textGradient" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#eeeeee" />
-      <stop offset="100%" stop-color="#888888" />
-    </linearGradient>
+    <div class="terminal">
+<pre class="ascii">
+ ██████╗ ██╗   ██╗███████╗███████╗████████╗
+██╔═══██╗██║   ██║██╔════╝██╔════╝╚══██╔══╝
+██║   ██║██║   ██║█████╗  ███████╗   ██║   
+██║   ██║██║   ██║██╔══╝  ╚════██║   ██║   
+╚██████╔╝╚██████╔╝███████╗███████║   ██║   
+ ╚═════╝  ╚═════╝ ╚══════╝╚══════╝   ╚═╝   
+ AI INTERVIEW SYSTEM INITIALIZING
+</pre>
+    </div>
 
-    <linearGradient id="pinGradient" x1="1" y1="0" x2="0" y2="0">
-      <stop offset="0%" stop-color="#bbbbbb" />
-      <stop offset="50%" stop-color="#888888" />
-      <stop offset="100%" stop-color="#555555" />
-    </linearGradient>
-  </defs>
-
-  <!-- LEFT TRACES -->
-  <path d="M100 100 H200 V210 H326" class="trace-bg"/>
-  <path d="M100 100 H200 V210 H326" class="trace-flow purple"/>
-
-  <path d="M80 180 H180 V230 H326" class="trace-bg"/>
-  <path d="M80 180 H180 V230 H326" class="trace-flow blue"/>
-
-  <path d="M60 260 H150 V250 H326" class="trace-bg"/>
-  <path d="M60 260 H150 V250 H326" class="trace-flow yellow"/>
-
-  <path d="M100 350 H200 V270 H326" class="trace-bg"/>
-  <path d="M100 350 H200 V270 H326" class="trace-flow green"/>
-
-  <!-- RIGHT TRACES -->
-  <path d="M700 90 H560 V210 H474" class="trace-bg"/>
-  <path d="M700 90 H560 V210 H474" class="trace-flow blue"/>
-
-  <path d="M740 160 H580 V230 H474" class="trace-bg"/>
-  <path d="M740 160 H580 V230 H474" class="trace-flow green"/>
-
-  <path d="M720 250 H590 V250 H474" class="trace-bg"/>
-  <path d="M720 250 H590 V250 H474" class="trace-flow red"/>
-
-  <path d="M680 340 H570 V270 H474" class="trace-bg"/>
-  <path d="M680 340 H570 V270 H474" class="trace-flow yellow"/>
-
-  <!-- CHIP -->
-  <rect x="330" y="190" width="140" height="100"
-        rx="20" ry="20"
-        fill="url(#chipGradient)"
-        stroke="#222" stroke-width="3"
-        filter="drop-shadow(0 0 6px rgba(0,0,0,0.8))"/>
-
-  <!-- TEXT -->
-  <text x="400" y="240"
-        font-size="22"
-        fill="url(#textGradient)"
-        text-anchor="middle"
-        alignment-baseline="middle">
-    Loading
-  </text>
-
-</svg>
-
+    <div class="footer">Preparing interview environment →</div>
   </div>
+
+  <!-- RIGHT -->
+  <div class="right">
+    <div class="grid"></div>
+
+    <div class="loading">
+      <div class="spinner"></div>
+      LOADING INTERVIEW MODULES
+    </div>
+  </div>
+
 </div>
 
+</form>
+
 <script>
-    // ⏳ Loader duration (ms)
-    const LOADER_TIME = 3500;
+    const steps = [
+        "Connecting to Interview Engine ...",
+        "Loading Question Bank ...",
+        "Initializing AI Evaluator ...",
+        "Setting Difficulty Levels ...",
+        "Preparing Candidate Session ...",
+        "Securing Interview Environment ...",
+        "Ready to Begin Interview ..."
+    ];
 
-    setTimeout(() => {
-        document.getElementById("preloader").classList.add("fade-out");
+    const logs = document.getElementById("logs");
 
-        setTimeout(() => {
-            // 🔁 Redirect to login page
-            window.location.href = "/Account/Login.aspx";
+    steps.forEach((text, i) => {
+        const div = document.createElement("div");
+        div.className = "log";
+        div.style.animationDelay = `${i * 0.7}s`;
+        div.innerHTML = `<time>${new Date().toLocaleTimeString()}</time>${text}`;
+        logs.appendChild(div);
+    });
 
-            // OR "/Account/Login.aspx"
-        }, 600);
+    /* Redirect */
+    setTimeout(function () {
+        window.location.href = '<%= ResolveUrl("~/Defaultpage.aspx") %>';
 
-    }, LOADER_TIME);
+    }, 6500);
 </script>
 
 </body>
