@@ -61,9 +61,7 @@
                 GridLines="None"
                 ShowHeaderWhenEmpty="True">
                 <Columns>
-                    <asp:BoundField DataField="Result_ID" HeaderText="Result ID">
-                        <ItemStyle CssClass="col-id" />
-                    </asp:BoundField>
+                    
                     <asp:BoundField DataField="Test_Name" HeaderText="Test Name">
                         <ItemStyle CssClass="col-test" />
                     </asp:BoundField>

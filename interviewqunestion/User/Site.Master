@@ -718,10 +718,6 @@ body::before {
 <i class="fas fa-clipboard-list"></i>Quizzes
 </asp:HyperLink>
 
-<asp:HyperLink ID="lnkQuizAttempt" runat="server" NavigateUrl="~/User/QuizAttempt.aspx" CssClass="btn-nav">
-<i class="fas fa-bullseye"></i>Attempt
-</asp:HyperLink>
-
 <asp:HyperLink ID="lnkResults" runat="server" NavigateUrl="~/User/Results.aspx" CssClass="btn-nav">
 <i class="fas fa-square-poll-horizontal"></i>Results
 </asp:HyperLink>

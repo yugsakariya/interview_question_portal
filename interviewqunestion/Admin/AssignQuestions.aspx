@@ -36,9 +36,7 @@
                 GridLines="None"
                 ShowHeaderWhenEmpty="True">
                 <Columns>
-                    <asp:BoundField DataField="Question_ID" HeaderText="ID">
-                        <ItemStyle CssClass="col-id" />
-                    </asp:BoundField>
+                    
                     <asp:BoundField DataField="Question_Text" HeaderText="Question">
                         <ItemStyle CssClass="col-question" />
                     </asp:BoundField>
@@ -79,12 +77,8 @@
                 GridLines="None"
                 ShowHeaderWhenEmpty="True">
                 <Columns>
-                    <asp:BoundField DataField="TQ_ID" HeaderText="Assignment ID">
-                        <ItemStyle CssClass="col-id" />
-                    </asp:BoundField>
-                    <asp:BoundField DataField="Question_ID" HeaderText="Question ID">
-                        <ItemStyle CssClass="col-id" />
-                    </asp:BoundField>
+                    
+                    
                     <asp:BoundField DataField="Question_Text" HeaderText="Question">
                         <ItemStyle CssClass="col-question" />
                     </asp:BoundField>
