@@ -5,7 +5,11 @@ using System.Data;
 using System.Text.RegularExpressions;
 using System.Web.UI;
 using System.Web.Services;
+using System.Net;
+using System.Net.Mail;
+using System.Security.Cryptography;
 using BCrypt.Net;
+using EmailLayer;
 
 namespace interviewqunestion.Account
 {
@@ -270,6 +274,103 @@ namespace interviewqunestion.Account
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("VerifyCredentials Error: " + ex.Message);
+                return new { success = false, message = "System error. Please try again." };
+            }
+        }
+
+        // WebMethod: Send OTP for password reset
+        [WebMethod]
+        public static object SendPasswordResetOTP(string email)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(email))
+                {
+                    return new { success = false, message = "Email is required." };
+                }
+
+                // Check if email exists in database
+                DBHelper db = new DBHelper();
+                Dictionary<string, dynamic> parameters = new Dictionary<string, dynamic>();
+                parameters["@p_Email"] = email.Trim();
+                DataTable userData = db.ExeSP("sp_GetUserByEmail", parameters);
+
+                if (userData == null || userData.Rows.Count == 0)
+                {
+                    return new { success = false, message = "No account found with this email." };
+                }
+
+                // Generate 6-digit OTP using EmailService
+                string otp = EmailHelper.GenerateSecureOTP(6);
+
+                // Store OTP in database with 10-minute expiry
+                Dictionary<string, dynamic> otpParams = new Dictionary<string, dynamic>();
+                otpParams["@p_Email"] = email.Trim();
+                otpParams["@p_OTP"] = otp;
+                otpParams["@p_ExpiryTime"] = DateTime.Now.AddMinutes(10);
+                db.ExeSP("sp_StorePasswordResetOTP", otpParams);
+
+                // Send OTP via EmailService
+                bool emailSent = EmailHelper.SendPasswordResetOTP(email.Trim(), otp);
+
+                if (emailSent)
+                {
+                    return new { success = true, message = "OTP sent to your email." };
+                }
+                else
+                {
+                    return new { success = false, message = "Failed to send email. Check SMTP settings." };
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("SendPasswordResetOTP Error: " + ex.Message);
+                return new { success = false, message = "System error. Please try again." };
+            }
+        }
+
+        // WebMethod: Verify OTP and reset password
+        [WebMethod]
+        public static object VerifyOTPAndResetPassword(string email, string otp, string newPassword)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(otp) || string.IsNullOrWhiteSpace(newPassword))
+                {
+                    return new { success = false, message = "All fields are required." };
+                }
+
+                if (newPassword.Length < 6)
+                {
+                    return new { success = false, message = "Password must be at least 6 characters." };
+                }
+
+                // Verify OTP from database
+                DBHelper db = new DBHelper();
+                Dictionary<string, dynamic> verifyParams = new Dictionary<string, dynamic>();
+                verifyParams["@p_Email"] = email.Trim();
+                verifyParams["@p_OTP"] = otp.Trim();
+                DataTable otpData = db.ExeSP("sp_VerifyPasswordResetOTP", verifyParams);
+
+                if (otpData == null || otpData.Rows.Count == 0)
+                {
+                    return new { success = false, message = "Invalid or expired OTP." };
+                }
+
+                // Hash the new password with BCrypt
+                string hashedPassword = BCrypt.Net.BCrypt.HashPassword(newPassword);
+
+                // Update password in database
+                Dictionary<string, dynamic> updateParams = new Dictionary<string, dynamic>();
+                updateParams["@p_Email"] = email.Trim();
+                updateParams["@p_NewPassword"] = hashedPassword;
+                db.ExeSP("sp_UpdateUserPassword", updateParams);
+
+                return new { success = true, message = "Password reset successful! You can now login." };
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("VerifyOTPAndResetPassword Error: " + ex.Message);
                 return new { success = false, message = "System error. Please try again." };
             }
         }
