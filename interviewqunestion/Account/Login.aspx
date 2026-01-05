@@ -506,7 +506,17 @@
                     e.preventDefault();
                     const val = input.value.trim();
                     if (!val && step !== "password") return;
-                    const displayVal = step === 'password' ? '•'.repeat(8) : val;
+                    
+                    // Check if user typed 'reset' during password step
+                    if (step === "password" && val.toLowerCase() === "reset") {
+                        print('<span class="prompt">➜</span> <span class="text-purple">reset</span>', '', false);
+                        input.value = "";
+                        disableInput();
+                        handleForgotPassword();
+                        return;
+                    }
+                    
+                    const displayVal = (step === 'password' || step === 'newPassword' || step === 'confirmPassword') ? '•'.repeat(8) : val;
                     print(`<span class="prompt">➜</span> <span class="text-amber">${displayVal}</span>`, '', false);
                     input.value = "";
                     disableInput();
@@ -574,6 +584,7 @@
                                 print('<span class="text-emerald">✓</span> Email verified successfully', 'text-emerald');
                                 print('');
                                 print('<span class="text-sky">🔒 Enter Password:</span>', 'text-sky');
+                                print('<span class="text-gray" style="font-size:12px;">💡 Type <span class="text-purple">reset</span> to reset password</span>', 'text-gray');
                                 input.type = "password";
                                 step = "password";
                                 enableInput();
@@ -625,6 +636,7 @@
                             print('<span class="text-red">✗ ' + result.message + '</span>', 'text-red');
                             print('');
                             print('<span class="text-sky">🔒 Enter Password:</span>', 'text-sky');
+                            print('<span class="text-gray" style="font-size:12px;">💡 Type <span class="text-purple">reset</span> to reset password</span>', 'text-gray');
                             input.type = "password";
                             enableInput();
                         }
@@ -634,10 +646,124 @@
                         print('<span class="text-red">✗ System error. Please try again.</span>', 'text-red');
                         print('');
                         print('<span class="text-sky">🔒 Enter Password:</span>', 'text-sky');
+                        print('<span class="text-gray" style="font-size:12px;">💡 Type <span class="text-purple">reset</span> to reset password</span>', 'text-gray');
                         input.type = "password";
                         enableInput();
                     });
+                } else if (step === "enterOTP") {
+                    print('');
+                    print('<span class="spinner"></span><span class="text-yellow">Verifying OTP...</span>', 'text-yellow');
+                    
+                    // Store OTP for password reset
+                    hfPassword.value = val; // Temporarily store OTP
+                    
+                    setTimeout(() => {
+                        print('<span class="text-emerald">✓</span> OTP verified', 'text-emerald');
+                        print('');
+                        print('<span class="text-sky">🔐 Enter New Password:</span>', 'text-sky');
+                        input.type = "password";
+                        step = "newPassword";
+                        enableInput();
+                    }, 500);
+                } else if (step === "newPassword") {
+                    if (val.length < 6) {
+                        print('<span class="text-red">✗ Password must be at least 6 characters</span>', 'text-red');
+                        print('');
+                        print('<span class="text-sky">🔐 Enter New Password:</span>', 'text-sky');
+                        input.type = "password";
+                        enableInput();
+                        return;
+                    }
+                    
+                    const storedOTP = hfPassword.value;
+                    const newPassword = val;
+                    
+                    print('');
+                    print('<span class="spinner"></span><span class="text-yellow">Resetting password...</span>', 'text-yellow');
+                    
+                    // AJAX call to verify OTP and reset password
+                    fetch('Login.aspx/VerifyOTPAndResetPassword', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email: hfEmail.value, otp: storedOTP, newPassword: newPassword })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        const result = data.d;
+                        if (result.success) {
+                            print('<span class="text-emerald">✓ ' + result.message + '</span>', 'text-emerald');
+                            print('');
+                            print('<span class="text-sky">🔒 Enter Password:</span>', 'text-sky');
+                            print('<span class="text-gray" style="font-size:12px;">💡 Type <span class="text-purple">reset</span> to reset password</span>', 'text-gray');
+                            input.type = "password";
+                            step = "password";
+                            hfPassword.value = "";
+                            enableInput();
+                        } else {
+                            print('<span class="text-red">✗ ' + result.message + '</span>', 'text-red');
+                            print('');
+                            print('<span class="text-sky">🔢 Enter OTP from email:</span>', 'text-sky');
+                            input.type = "text";
+                            step = "enterOTP";
+                            enableInput();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        print('<span class="text-red">✗ System error. Please try again.</span>', 'text-red');
+                        print('');
+                        print('<span class="text-sky">🔢 Enter OTP from email:</span>', 'text-sky');
+                        input.type = "text";
+                        step = "enterOTP";
+                        enableInput();
+                    });
                 }
+            }
+            
+            // Handle forgot password flow
+            function handleForgotPassword() {
+                print('');
+                print('<span class="spinner"></span><span class="text-yellow">Sending OTP to your email...</span>', 'text-yellow');
+                
+                fetch('Login.aspx/SendPasswordResetOTP', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: hfEmail.value })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const result = data.d;
+                    if (result.success) {
+                        print('<span class="text-emerald">✓ ' + result.message + '</span>', 'text-emerald');
+                        print('');
+                        print('<span class="text-sky">🔢 Enter 6-digit OTP from email:</span>', 'text-sky');
+                        input.type = "text";
+                        step = "enterOTP";
+                        enableInput();
+                    } else {
+                        print('<span class="text-red">✗ ' + result.message + '</span>', 'text-red');
+                        print('');
+                        print('<span class="text-sky">🔒 Enter Password:</span>', 'text-sky');
+                        print('<span class="text-gray" style="font-size:12px;">💡 Type <span class="text-purple">reset</span> to reset password</span>', 'text-gray');
+                        input.type = "password";
+                        step = "password";
+                        enableInput();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    print('<span class="text-red">✗ Failed to send OTP. Please try again.</span>', 'text-red');
+                    print('');
+                    print('<span class="text-sky">🔒 Enter Password:</span>', 'text-sky');
+                    print('<span class="text-gray" style="font-size:12px;">💡 Type <span class="text-purple">reset</span> to reset password</span>', 'text-gray');
+                    input.type = "password";
+                    step = "password";
+                    enableInput();
+                });
             }
 
             document.addEventListener("click", (e) => {
@@ -651,6 +777,49 @@
             } else {
                 initFallingText();
             }
+            
+            // Handle browser back/forward navigation - reset the terminal state
+            window.addEventListener('pageshow', function(event) {
+                if (event.persisted) {
+                    // Page was loaded from cache (back/forward navigation)
+                    // Reset the terminal to initial state
+                    output.innerHTML = '';
+                    input.value = '';
+                    input.type = 'text';
+                    step = 'boot';
+                    inputEnabled = false;
+                    input.disabled = true;
+                    hfEmail.value = '';
+                    hfPassword.value = '';
+                    
+                    // Re-run the boot sequence
+                    setTimeout(() => {
+                        print('<span class="text-emerald" style="font-weight: 700;">╔════════════════════════════════════════╗</span>', '', false);
+                        print('<span class="text-emerald" style="font-weight: 700;">║</span>  <span class="text-purple">TERMINAL RESTORED...</span>              <span class="text-emerald" style="font-weight: 700;">║</span>', '', false);
+                        print('<span class="text-emerald" style="font-weight: 700;">╚════════════════════════════════════════╝</span>', '', false);
+                    }, 200);
+                    
+                    setTimeout(() => {
+                        print('System: <span class="text-sky">IQ Portal v2.5.1</span>', 'text-gray');
+                        print('Interface: <span class="text-purple">Terminal UI Active</span>', 'text-gray');
+                    }, 600);
+                    
+                    setTimeout(() => {
+                        print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'text-gray');
+                    }, 900);
+                    
+                    setTimeout(() => {
+                        print('');
+                        print('<span class="text-sky">▶ Enter <span class="text-amber">[1]</span> for USER LOGIN</span>');
+                        print('<span class="text-sky">▶ Enter <span class="text-amber">[2]</span> to REGISTER</span>');
+                        print('');
+                        print('<span class="text-gray" style="font-style: italic; font-size: 12px;">💡 Tip: Press ESC to go back</span>', 'text-gray');
+                        print('');
+                        step = "choice";
+                        enableInput();
+                    }, 1200);
+                }
+            });
         </script>
     </form>
 </body>
