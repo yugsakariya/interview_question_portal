@@ -20,7 +20,7 @@ namespace interviewqunestion.User
 
         protected void btnRegisterNav_Click(object sender, EventArgs e)
         {
-            Response.Redirect("~/Account/resgister.aspx");
+            Response.Redirect("~/Account/Register.aspx");
         }
 
         protected void btnHaveAccount_Click(object sender, EventArgs e)
@@ -31,7 +31,7 @@ namespace interviewqunestion.User
 
         protected void btnGetStarted_Click(object sender, EventArgs e)
         {
-            Response.Redirect("~/Account/register.aspx");
+            Response.Redirect("~/Account/Register.aspx");
         }
 
         protected void btnAbout_Click(object sender, EventArgs e)

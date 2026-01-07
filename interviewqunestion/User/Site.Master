@@ -1,4 +1,4 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.Master.cs" Inherits="interviewqunestion.Site" %>
+<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.Master.cs" Inherits="interviewqunestion.Site" %>
 
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -384,10 +384,10 @@ body::before {
     right: 0;
     top: 0;
     height: 100%;
-    width: 8rem;
-    background: linear-gradient(to left, rgba(251,191,36,0.2), transparent);
+    width: 10rem;
+    background: linear-gradient(to left, rgba(99,102,241,0.3), rgba(139,92,246,0.2), transparent);
     opacity: 0;
-    transition: opacity 1s ease;
+    transition: opacity 0.8s ease;
     z-index: 9999;
     pointer-events: none;
 }
@@ -401,17 +401,19 @@ body::before {
     right: 0;
     top: 50%;
     transform: translateY(-50%);
-    width: 6rem;
-    height: 16rem;
-    background: linear-gradient(to right, rgba(251,191,36,0.1), rgba(252,211,77,0.3));
-    border-left: 4px solid rgba(251,191,36,0.5);
+    width: 7rem;
+    height: 18rem;
+    background: linear-gradient(to right, rgba(99,102,241,0.15), rgba(139,92,246,0.4));
+    border-left: 4px solid rgba(139,92,246,0.7);
     border-radius: 1.5rem 0 0 1.5rem;
+    box-shadow: -10px 0 40px rgba(139,92,246,0.4);
 }
 
 /* Walking Human Figure */
 .walking-human {
     position: fixed;
-    top: 6rem;
+    top: 50%;
+    transform: translateY(-50%);
     z-index: 10000;
     opacity: 0;
     pointer-events: none;
@@ -419,18 +421,21 @@ body::before {
 
 .walking-human.active {
     opacity: 1;
-    animation: walkOut 3s ease-in-out forwards;
+    animation: walkOut 2.5s ease-in-out forwards;
 }
 
 @keyframes walkOut {
     0% {
         left: 50%;
-        transform: translateX(-50%);
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+    80% {
         opacity: 1;
     }
     100% {
-        left: calc(100% + 200px);
-        transform: translateX(0);
+        left: calc(100% - 3rem);
+        transform: translate(0, -50%) scale(0.8);
         opacity: 0;
     }
 }
@@ -446,21 +451,21 @@ body::before {
 
 /* Human body parts */
 .human-head {
-    width: 3rem;
-    height: 3rem;
-    background: linear-gradient(135deg, #60a5fa, #3b82f6);
+    width: 3.5rem;
+    height: 3.5rem;
+    background: linear-gradient(135deg, #a5b4fc, #6366f1);
     border-radius: 50%;
-    margin: 0 auto 0.25rem;
-    box-shadow: 0 4px 12px rgba(59,130,246,0.4);
+    margin: 0 auto 0.35rem;
+    box-shadow: 0 4px 16px rgba(99,102,241,0.5);
 }
 
 .human-body {
-    width: 2rem;
-    height: 4rem;
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-    border-radius: 0.5rem;
+    width: 2.5rem;
+    height: 4.5rem;
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    border-radius: 0.6rem;
     margin: 0 auto;
-    box-shadow: 0 4px 12px rgba(37,99,235,0.4);
+    box-shadow: 0 4px 16px rgba(79,70,229,0.5);
 }
 
 .human-arm {
@@ -718,9 +723,7 @@ body::before {
 <i class="fas fa-clipboard-list"></i>Quizzes
 </asp:HyperLink>
 
-<asp:HyperLink ID="lnkQuizAttempt" runat="server" NavigateUrl="~/User/QuizAttempt.aspx" CssClass="btn-nav">
-<i class="fas fa-bullseye"></i>Attempt
-</asp:HyperLink>
+
 
 <asp:HyperLink ID="lnkResults" runat="server" NavigateUrl="~/User/Results.aspx" CssClass="btn-nav">
 <i class="fas fa-square-poll-horizontal"></i>Results
