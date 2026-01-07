@@ -539,7 +539,7 @@
 
             setTimeout(() => {
                 print('');
-                print('<span class="text-sky">📝 Step 1/4: Identity Initialization</span>', 'text-sky');
+                print('<span class="text-sky">📝 Step 1/5: Identity Initialization</span>', 'text-sky');
                 print('<span class="text-amber">Enter First Name:</span>', 'text-amber');
                 print('');
                 step = "firstName";
@@ -568,7 +568,7 @@
                     setTimeout(() => {
                         print('<span class="text-emerald">✓</span> First name recorded', 'text-emerald');
                         print('');
-                        print('<span class="text-sky">📝 Step 2/4: Complete Identity</span>', 'text-sky');
+                        print('<span class="text-sky">📝 Step 2/5: Complete Identity</span>', 'text-sky');
                         print('<span class="text-amber">Enter Last Name:</span>', 'text-amber');
                         print('');
                         step = "lastName";
@@ -580,7 +580,7 @@
                     setTimeout(() => {
                         print('<span class="text-emerald">✓</span> Last name recorded', 'text-emerald');
                         print('');
-                        print('<span class="text-sky">📧 Step 3/4: Communication Channel</span>', 'text-sky');
+                        print('<span class="text-sky">📧 Step 3/5: Communication Channel</span>', 'text-sky');
                         print('<span class="text-amber">Enter Email Address:</span>', 'text-amber');
                         print('');
                         step = "email";
@@ -618,7 +618,7 @@
                                 hfEmail.value = val;
                                 print('<span class="text-emerald">✓</span> Email verified and available', 'text-emerald');
                                 print('');
-                                print('<span class="text-sky">🔒 Step 4/4: Security Protocol</span>', 'text-sky');
+                                print('<span class="text-sky">🔒 Step 4/5: Security Protocol</span>', 'text-sky');
                                 print('<span class="text-amber">Create Security Key (min 6 characters):</span>', 'text-amber');
                                 print('');
                                 input.type = "password";
@@ -643,21 +643,157 @@
                         input.type = "text";
                         setTimeout(() => {
                             print('');
-                            print('<span class="spinner"></span><span class="text-yellow">Validating credentials...</span>', 'text-yellow');
+                            print('<span class="text-emerald">✓</span> Security parameters accepted', 'text-emerald');
                         }, 300);
 
                         setTimeout(() => {
-                            print('<span class="text-emerald">✓</span> Security parameters accepted', 'text-emerald');
-                        }, 900);
+                            print('');
+                            print('<span class="text-sky">📩 Step 5/5: Email Verification</span>', 'text-sky');
+                            print('<span class="spinner"></span><span class="text-yellow">Sending verification code to your email...</span>', 'text-yellow');
+                        }, 700);
 
+                        // Send OTP to email
                         setTimeout(() => {
-                            print('<span class="text-emerald">✓</span> Syncing with IQ Central Database...', 'text-emerald');
-                        }, 1400);
-
-                        setTimeout(() => {
-                            document.getElementById('<%= btnSubmitInternal.ClientID %>').click();
-                        }, 1900);
+                            fetch('Register.aspx/SendVerificationOTP', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ email: hfEmail.value })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.d && data.d.success) {
+                                    print('<span class="text-emerald">✓</span> Verification code sent to ' + hfEmail.value, 'text-emerald');
+                                    print('');
+                                    print('<span class="text-amber">Enter 6-digit OTP from your email:</span>', 'text-amber');
+                                    print('<span class="text-gray" style="font-size: 11px;">Type "resend" to get a new code</span>', 'text-gray');
+                                    print('');
+                                    step = "otp";
+                                    enableInput();
+                                } else {
+                                    print('<span class="text-red">✗</span> ' + (data.d ? data.d.message : 'Failed to send OTP'), 'text-red');
+                                    print('<span class="text-amber">Press Enter to retry...</span>', 'text-amber');
+                                    step = "retryOtp";
+                                    enableInput();
+                                }
+                            })
+                            .catch(error => {
+                                print('<span class="text-red">✗</span> Network error. Please try again.', 'text-red');
+                                step = "retryOtp";
+                                enableInput();
+                            });
+                        }, 1200);
                     }
+                }
+                else if (step === "retryOtp") {
+                    // Retry sending OTP
+                    print('<span class="spinner"></span><span class="text-yellow">Resending verification code...</span>', 'text-yellow');
+                    
+                    fetch('Register.aspx/SendVerificationOTP', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email: hfEmail.value })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.d && data.d.success) {
+                            print('<span class="text-emerald">✓</span> Verification code sent!', 'text-emerald');
+                            print('');
+                            print('<span class="text-amber">Enter 6-digit OTP from your email:</span>', 'text-amber');
+                            print('');
+                            step = "otp";
+                            enableInput();
+                        } else {
+                            print('<span class="text-red">✗</span> ' + (data.d ? data.d.message : 'Failed to send OTP'), 'text-red');
+                            print('<span class="text-amber">Press Enter to retry...</span>', 'text-amber');
+                            enableInput();
+                        }
+                    })
+                    .catch(error => {
+                        print('<span class="text-red">✗</span> Network error. Please try again.', 'text-red');
+                        enableInput();
+                    });
+                }
+                else if (step === "otp") {
+                    // Handle resend command
+                    if (val.toLowerCase() === 'resend') {
+                        print('<span class="spinner"></span><span class="text-yellow">Resending verification code...</span>', 'text-yellow');
+                        
+                        fetch('Register.aspx/SendVerificationOTP', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ email: hfEmail.value })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.d && data.d.success) {
+                                print('<span class="text-emerald">✓</span> New verification code sent!', 'text-emerald');
+                                print('');
+                                print('<span class="text-amber">Enter 6-digit OTP from your email:</span>', 'text-amber');
+                                print('');
+                                enableInput();
+                            } else {
+                                print('<span class="text-red">✗</span> ' + (data.d ? data.d.message : 'Failed to resend OTP'), 'text-red');
+                                enableInput();
+                            }
+                        })
+                        .catch(error => {
+                            print('<span class="text-red">✗</span> Network error. Please try again.', 'text-red');
+                            enableInput();
+                        });
+                        return;
+                    }
+
+                    // Validate OTP format
+                    if (!/^\d{6}$/.test(val)) {
+                        setTimeout(() => {
+                            print('<span class="text-red">✗</span> OTP must be exactly 6 digits', 'text-red');
+                            enableInput();
+                        }, 300);
+                        return;
+                    }
+
+                    // Verify OTP
+                    print('<span class="spinner"></span><span class="text-yellow">Verifying code...</span>', 'text-yellow');
+                    
+                    fetch('Register.aspx/VerifyOTP', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email: hfEmail.value, otp: val })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.d && data.d.success) {
+                            print('<span class="text-emerald">✓</span> Email verified successfully!', 'text-emerald');
+                            print('');
+                            print('<span class="spinner"></span><span class="text-yellow">Creating your account...</span>', 'text-yellow');
+                            
+                            setTimeout(() => {
+                                print('<span class="text-emerald">✓</span> Syncing with IQ Central Database...', 'text-emerald');
+                            }, 500);
+
+                            setTimeout(() => {
+                                document.getElementById('<%= btnSubmitInternal.ClientID %>').click();
+                            }, 1000);
+                        } else {
+                            print('<span class="text-red">✗</span> ' + (data.d ? data.d.message : 'Invalid OTP'), 'text-red');
+                            print('');
+                            print('<span class="text-amber">Enter 6-digit OTP or type "resend":</span>', 'text-amber');
+                            print('');
+                            enableInput();
+                        }
+                    })
+                    .catch(error => {
+                        print('<span class="text-red">✗</span> Network error. Please try again.', 'text-red');
+                        enableInput();
+                    });
                 }
             }
 

@@ -31,39 +31,20 @@ namespace EmailLayer
                 return otp.ToString();
             }
         }
-
-        /// <summary>
-        /// Gets an application setting from the database
-        /// </summary>
-        private static string GetAppSetting(string key)
-        {
-            try
-            {
-                DBHelper db = new DBHelper();
-                Dictionary<string, dynamic> parameters = new Dictionary<string, dynamic>();
-                parameters["@p_Key"] = key;
-                DataTable dt = db.ExeSP("sp_GetAppSetting", parameters);
-
-                if (dt != null && dt.Rows.Count > 0)
-                {
-                    return dt.Rows[0]["SettingValue"]?.ToString();
-                }
-                return null;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine("GetAppSetting Error: " + ex.Message);
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Sends an OTP email for password reset
-        /// </summary>
         public static bool SendPasswordResetOTP(string toEmail, string otp)
         {
             string subject = "Password Reset OTP - IQ Portal";
             string body = GetPasswordResetEmailBody(otp);
+            return SendEmail(toEmail, subject, body);
+        }
+
+        /// <summary>
+        /// Sends an OTP for email verification during registration
+        /// </summary>
+        public static bool SendRegistrationVerificationOTP(string toEmail, string otp)
+        {
+            string subject = "Verify Your Email - IQ Portal Registration";
+            string body = GetRegistrationVerificationEmailBody(otp);
             return SendEmail(toEmail, subject, body);
         }
 
@@ -176,5 +157,32 @@ namespace EmailLayer
 </body>
 </html>";
         }
+
+        /// <summary>
+        /// HTML template for registration email verification OTP
+        /// </summary>
+        private static string GetRegistrationVerificationEmailBody(string otp)
+        {
+            return $@"
+<html>
+<body style='font-family: Arial, sans-serif; background: #1a1a2e; color: #eee; padding: 20px;'>
+<div style='max-width: 450px; margin: auto; background: #16213e; padding: 35px; border-radius: 16px; border: 1px solid #6366f1;'>
+    <h2 style='color: #a5b4fc; text-align: center;'>🎓 IQ Portal</h2>
+    <p style='text-align: center; color: #9ca3af;'>Email Verification</p>
+    
+    <p style='color: #e5e7eb; text-align: center;'>Please verify your email address to complete registration</p>
+    
+    <div style='background: linear-gradient(135deg, #0f3460, #1a1a2e); padding: 25px; border-radius: 12px; text-align: center; margin: 25px 0; border: 2px solid #10b981;'>
+        <p style='margin: 0 0 10px 0; color: #a5b4fc; font-size: 14px;'>Your Verification Code</p>
+        <span style='font-size: 38px; font-weight: bold; letter-spacing: 8px; color: #10b981; text-shadow: 0 0 10px rgba(16,185,129,0.5);'>{otp}</span>
+    </div>
+    
+    <p style='text-align: center; color: #9ca3af; font-size: 13px;'>⏰ Valid for <strong>10 minutes</strong></p>
+    <p style='text-align: center; color: #ef4444; font-size: 12px; margin-top: 20px;'>⚠️ If you didn't request this, please ignore this email</p>
+</div>
+</body>
+</html>";
+        }
     }
 }
+

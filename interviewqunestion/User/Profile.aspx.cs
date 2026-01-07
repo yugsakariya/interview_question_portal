@@ -42,7 +42,6 @@ namespace interviewqunestion.User
                     lblFullName.Text = row["User_FirstName"].ToString() + " " + row["User_LastName"].ToString();
                     lblEmail.Text = row["User_EmailID"].ToString();
                     lblUsername.Text = row["User_EmailID"].ToString(); // Using email as username
-                    lblRole.Text = row["User_Role"].ToString();
 
                     // Format member since date
                     if (row["User_RegisteredDate"] != DBNull.Value)
@@ -56,6 +55,12 @@ namespace interviewqunestion.User
             {
                 System.Diagnostics.Debug.WriteLine("Error loading profile: " + ex.Message);
             }
+        }
+
+        protected void btnChangePassword_Click(object sender, EventArgs e)
+        {
+            // Redirect to Change Password page
+            Response.Redirect("~/User/ChangePassword.aspx");
         }
     }
 }
