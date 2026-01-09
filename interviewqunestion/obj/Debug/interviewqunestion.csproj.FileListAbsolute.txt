@@ -463,14 +463,8 @@ D:\Collage\.net\interview_question_portal\interviewqunestion\bin\roslyn\vbc.exe.
 D:\Collage\.net\interview_question_portal\interviewqunestion\bin\roslyn\vbc.rsp
 D:\Collage\.net\interview_question_portal\interviewqunestion\bin\roslyn\VBCSCompiler.exe
 D:\Collage\.net\interview_question_portal\interviewqunestion\bin\roslyn\VBCSCompiler.exe.config
-D:\Collage\.net\interview_question_portal\interviewqunestion\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
-D:\Collage\.net\interview_question_portal\interviewqunestion\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
-D:\Collage\.net\interview_question_portal\interviewqunestion\obj\Debug\interviewqunestion.csproj.AssemblyReference.cache
-D:\Collage\.net\interview_question_portal\interviewqunestion\obj\Debug\interviewqunestion.csproj.CoreCompileInputs.cache
-D:\Collage\.net\interview_question_portal\interviewqunestion\obj\Debug\intervie.1F4B55E7.Up2Date
-D:\Collage\.net\interview_question_portal\interviewqunestion\obj\Debug\interviewqunestion.dll
-D:\Collage\.net\interview_question_portal\interviewqunestion\obj\Debug\interviewqunestion.pdb
 D:\Collage\.net\interview_question_portal\interviewqunestion\bin\BCrypt.Net-Next.dll
+D:\Collage\.net\interview_question_portal\interviewqunestion\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
 D:\Collage\.net\interview_question_portal\interviewqunestion\bin\System.Buffers.dll
 D:\Collage\.net\interview_question_portal\interviewqunestion\bin\System.Memory.dll
 D:\Collage\.net\interview_question_portal\interviewqunestion\bin\System.Numerics.Vectors.dll
@@ -480,3 +474,9 @@ D:\Collage\.net\interview_question_portal\interviewqunestion\bin\System.Buffers.
 D:\Collage\.net\interview_question_portal\interviewqunestion\bin\System.Memory.xml
 D:\Collage\.net\interview_question_portal\interviewqunestion\bin\System.Numerics.Vectors.xml
 D:\Collage\.net\interview_question_portal\interviewqunestion\bin\System.Runtime.CompilerServices.Unsafe.xml
+D:\Collage\.net\interview_question_portal\interviewqunestion\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+D:\Collage\.net\interview_question_portal\interviewqunestion\obj\Debug\interviewqunestion.csproj.AssemblyReference.cache
+D:\Collage\.net\interview_question_portal\interviewqunestion\obj\Debug\interviewqunestion.csproj.CoreCompileInputs.cache
+D:\Collage\.net\interview_question_portal\interviewqunestion\obj\Debug\intervie.1F4B55E7.Up2Date
+D:\Collage\.net\interview_question_portal\interviewqunestion\obj\Debug\interviewqunestion.dll
+D:\Collage\.net\interview_question_portal\interviewqunestion\obj\Debug\interviewqunestion.pdb
