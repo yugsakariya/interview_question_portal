@@ -360,11 +360,29 @@ namespace interviewqunestion.Account
                 // Hash the new password with BCrypt
                 string hashedPassword = BCrypt.Net.BCrypt.HashPassword(newPassword);
 
-                // Update password in database
-                Dictionary<string, dynamic> updateParams = new Dictionary<string, dynamic>();
-                updateParams["@p_Email"] = email.Trim();
-                updateParams["@p_NewPassword"] = hashedPassword;
-                db.ExeSP("sp_UpdateUserPassword", updateParams);
+                // Update password using direct SQL (using correct column name User_EmailID)
+                string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["constr"].ConnectionString;
+                using (System.Data.SqlClient.SqlConnection conn = new System.Data.SqlClient.SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    
+                    // Update password
+                    string updateSql = "UPDATE Users SET User_Password = @NewPassword WHERE User_EmailID = @Email";
+                    using (System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand(updateSql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@NewPassword", hashedPassword);
+                        cmd.Parameters.AddWithValue("@Email", email.Trim());
+                        cmd.ExecuteNonQuery();
+                    }
+                    
+                    // Delete OTP after successful password reset
+                    string deleteSql = "DELETE FROM PasswordResetOTP WHERE Email = @Email";
+                    using (System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand(deleteSql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@Email", email.Trim());
+                        cmd.ExecuteNonQuery();
+                    }
+                }
 
                 return new { success = true, message = "Password reset successful! You can now login." };
             }

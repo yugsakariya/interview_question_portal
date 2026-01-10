@@ -75,7 +75,16 @@ namespace interviewqunestion.User
                 }
                 else
                 {
-                    ShowError("An error occurred while updating your password. Please try again.");
+                    // Try to get the actual error message
+                    string errorDetails = System.Web.HttpContext.Current.Items["PasswordUpdateError"] as string;
+                    if (!string.IsNullOrEmpty(errorDetails))
+                    {
+                        ShowError($"Error updating password: {errorDetails}");
+                    }
+                    else
+                    {
+                        ShowError("An error occurred while updating your password. Please try again.");
+                    }
                 }
             }
             catch (Exception ex)
@@ -115,34 +124,24 @@ namespace interviewqunestion.User
         {
             try
             {
-                // First get the user's email
-                Dictionary<string, dynamic> getUserParams = new Dictionary<string, dynamic>();
-                getUserParams["@p_User_ID"] = userId;
-                DataTable userDt = db.ExeSP("sp_Get_User_ByID", getUserParams);
-                
-                if (userDt == null || userDt.Rows.Count == 0)
-                {
-                    return false;
-                }
-                
-                string userEmail = userDt.Rows[0]["User_Email"].ToString();
-
                 // Use BCrypt to hash the new password (same as Register and Login)
                 string hashedPassword = BCrypt.Net.BCrypt.HashPassword(newPassword);
 
-                // Use the existing sp_UpdateUserPassword stored procedure
+                // Use stored procedure to update password
                 Dictionary<string, dynamic> parameters = new Dictionary<string, dynamic>();
-                parameters["@p_Email"] = userEmail;
+                parameters["@p_User_ID"] = userId;
                 parameters["@p_NewPassword"] = hashedPassword;
 
                 // Execute the stored procedure to update password
-                db.ExeSP("sp_UpdateUserPassword", parameters);
+                db.ExeSP("sp_UpdateUserPasswordByID", parameters);
 
                 return true;
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("Error updating password: " + ex.Message);
+                // Store the error message for display
+                System.Web.HttpContext.Current.Items["PasswordUpdateError"] = ex.Message;
                 return false;
             }
         }
